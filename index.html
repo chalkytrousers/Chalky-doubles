@@ -1,33 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Chalky Trousers Doubles Randomiser</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chalky Trousers Doubles Drawer</title>
   <style>
-    :root { --bg1:#000; --bg2:#111; --fg:#fff; --muted:#bbb; --card:#111; }
-    * { box-sizing: border-box; }
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
-      color: var(--fg);
-      margin: 0; min-height: 100vh;
-      display: flex; flex-direction: column;
-      overflow-x: hidden;
+    :root {
+      --bg1: #000;
+      --bg2: #111;
+      --fg: #fff;
+      --highlight: #0f0;
     }
-    .wrap { width: 100%; max-width: 640px; margin: 0 auto; padding: 20px; text-align: center; }
-    img.logo { max-width: 200px; display: block; margin: 20px auto; }
-    h2 { font-size: 28px; margin: 10px 0 6px; letter-spacing: 2px; }
-    p.description { font-size: 16px; color: var(--muted); margin: 0 0 22px; line-height: 1.45; }
-    .controls { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-    label { font-size: 18px; display: flex; flex-direction: column; align-items: center; }
-    input[type="number"] {
-      width: 80px; padding: 8px; text-align: center;
-      border-radius: 8px; border: none; font-size: 16px;
-      margin-top: 4px;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, var(--bg1), var(--bg2));
+      color: var(--fg);
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-top: 10px;
+      font-size: 28px;
+    }
+    p.description {
+      max-width: 600px;
+      margin: 10px auto 30px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    label {
+      margin: 0 10px;
+    }
+    input {
+      width: 60px;
+      padding: 6px;
+      margin: 6px;
+      border-radius: 6px;
+      border: none;
+      text-align: center;
+      font-size: 16px;
     }
     button {
-      margin: 24px 0;   /* equal spacing above & below */
+      margin: 24px 0;
       padding: 14px 28px;
       border-radius: 12px;
       border: 2px solid var(--fg);
@@ -38,94 +53,87 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4); /* makes it stand out */
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
-    button::before {
+    button::after {
       content: "";
       position: absolute;
-      top: 0; left: -75%;
-      width: 50%; height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
-      transform: skewX(-25deg);
-    }
-    button:hover::before {
-      animation: sweep 1.2s ease;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation: sweep 3s infinite;
     }
     @keyframes sweep {
-      0% { left: -75%; }
-      100% { left: 125%; }
+      0% { left: -100%; }
+      50% { left: 100%; }
+      100% { left: 100%; }
     }
-
-    #output { margin-top: 16px; }
-    #output h3 { margin: 10px 0 12px; }
-
-    ul { list-style: none; padding: 0; margin: 0; }
-    li {
-      margin: 8px 0; padding: 10px 20px; background: var(--card);
-      border-radius: 50px; font-size: 18px; width: fit-content;
-      margin-left: auto; margin-right: auto;
-      opacity: 0; 
-      transform: translate(0,0);
-      animation: scatter 0.8s ease forwards;
+    .pairs {
+      margin-top: 20px;
     }
-    li:first-child {
-      background: #030; color: #fff; font-weight: bold;
-      border: 2px solid #0f0; box-shadow: 0 0 15px #0f0;
-      animation: bounceIn 0.9s forwards;
-      opacity: 1;
+    .pairs h3 {
+      margin-bottom: 15px;
     }
-
+    .pair {
+      display: inline-block;
+      margin: 8px;
+      padding: 10px 20px;
+      border-radius: 20px;
+      background: #222;
+      font-weight: bold;
+      opacity: 0;
+      transform: scale(0.5);
+      animation: scatter 0.6s forwards;
+    }
+    .pair.highlight {
+      background: green;
+      color: white;
+      box-shadow: 0 0 20px var(--highlight);
+      animation: pulse 1.5s infinite alternate;
+    }
     @keyframes scatter {
-      0% { opacity: 0; transform: translate(0,0) scale(0.8); }
-      40% { opacity: 1; transform: translate(var(--x), var(--y)) scale(1.2); }
-      100% { opacity: 0.8; transform: translate(0,0) scale(1); }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
-    @keyframes bounceIn {
-      0% { transform: scale(0.6); opacity: 0; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(1.05); opacity: 1; }
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
     }
-
-    .footer { margin-top: 40px; padding: 16px 0 10px; }
-    .footer img { max-width: 150px; display: block; margin: 0 auto; opacity: .9; }
+    .footer {
+      margin-top: 40px;
+      padding: 16px 0 10px;
+    }
+    .footer img {
+      max-width: 150px;
+      display: block;
+      margin: 0 auto;
+      opacity: .9;
+    }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <!-- Top Logo -->
-    <img class="logo" src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Trousers Logo">
-
-    <h2>Doubles Randomiser</h2>
-    <p class="description">
-      Welcome to the Chalky Trousers Doubles Drawer. Pop your team sizes in, smash that "Rack 'Em" button, and let fate (and a dodgy algorithm) decide who’s lumped with who.
-    </p>
-
-    <div class="controls">
-      <label>Team A size:
-        <input type="number" id="teamA" value="4" min="1" inputmode="numeric">
-      </label>
-      <label>Team B size:
-        <input type="number" id="teamB" value="4" min="1" inputmode="numeric">
-      </label>
-      <label>Doubles to make:
-        <input type="number" id="numPairs" value="1" min="1" inputmode="numeric">
-      </label>
-    </div>
-
-    <button id="genBtn" type="button">Rack ’Em!</button>
-
-    <div id="output" aria-live="polite"></div>
-  </main>
-
-  <!-- Bottom (footer) logo -->
+  <img src="https://i.imgur.com/yTCNg6N.png" alt="Pool Logo" style="max-width:120px; margin:0 auto; display:block;">
+  <h1>Doubles Randomiser</h1>
+  <p class="description">
+    Welcome to the Chalky Trousers Doubles Drawer. Pop your team sizes in, smash that "Rack 'Em" button, 
+    and let fate (and a dodgy algorithm) decide who’s lumped with who.
+  </p>
+  <div>
+    <label>Team A size: <input type="number" id="teamA" value="4" min="2"></label>
+    <label>Team B size: <input type="number" id="teamB" value="4" min="2"></label>
+  </div>
+  <div>
+    <label>Doubles to make: <input type="number" id="count" value="1" min="1"></label>
+  </div>
+  <button onclick="generatePairs()">Rack ’Em!</button>
+  <div class="pairs" id="pairs"></div>
   <div class="footer">
-    <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Footer Logo">
+    <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo">
   </div>
 
   <script>
-    const output = document.getElementById('output');
-    const genBtn = document.getElementById('genBtn');
-
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -134,54 +142,42 @@
       return arr;
     }
 
-    function validNum(v) {
-      const n = Number(v);
-      return Number.isFinite(n) && n >= 1 ? Math.floor(n) : null;
-    }
-
     function generatePairs() {
-      const a = validNum(document.getElementById('teamA').value);
-      const b = validNum(document.getElementById('teamB').value);
-      const numPairs = validNum(document.getElementById('numPairs').value) || 1;
+      const sizeA = parseInt(document.getElementById('teamA').value);
+      const sizeB = parseInt(document.getElementById('teamB').value);
+      const count = parseInt(document.getElementById('count').value);
 
-      if (a === null || b === null) {
-        output.innerHTML = `<p style="color:#f88">Oi! Enter at least 1 player for each team.</p>`;
-        output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (sizeA < 2 || sizeB < 2) {
+        document.getElementById('pairs').innerHTML = "<p>Both teams need at least 2 players!</p>";
         return;
       }
 
-      const teamA = shuffle(Array.from({ length: a }, (_, i) => `A${i + 1}`));
-      const teamB = shuffle(Array.from({ length: b }, (_, i) => `B${i + 1}`));
-      const count = Math.min(teamA.length, teamB.length, numPairs);
+      let teamA = Array.from({length: sizeA}, (_, i) => "A" + (i+1));
+      let teamB = Array.from({length: sizeB}, (_, i) => "B" + (i+1));
 
-      const pairs = [];
-      for (let i = 0; i < count; i++) pairs.push(`${teamA[i]} + ${teamB[i]}`);
+      shuffle(teamA);
+      shuffle(teamB);
 
-      let html = `<h3>And the dream team${count > 1 ? 's are' : ' is'}…</h3>`;
-      html += `<ul>${pairs.map(p => {
-        const x = Math.floor(Math.random() * 120 - 60) + "px";
-        const y = Math.floor(Math.random() * 80 - 40) + "px";
-        return `<li style="--x:${x};--y:${y}">${p}</li>`;
-      }).join('')}</ul>`;
+      let pairs = [];
+      let numMatches = Math.min(Math.floor(sizeA/2), Math.floor(sizeB/2), count);
 
-      if (numPairs > count) {
-        html += `<p style="color:#bbb;margin-top:10px;">Only ${count} pair${count>1?'s':''} possible with current players.</p>`;
+      for (let i=0; i<numMatches; i++) {
+        let aTeam = teamA.slice(i*2, i*2+2).join(" + ");
+        let bTeam = teamB.slice(i*2, i*2+2).join(" + ");
+        pairs.push(`${aTeam}  vs  ${bTeam}`);
       }
 
-      if (teamA.length !== teamB.length) {
-        const diff = Math.abs(teamA.length - teamB.length);
-        const bigger = teamA.length > teamB.length ? 'Team A' : 'Team B';
-        html += `<p style="color:#bbb;margin-top:10px;">Note: ${bigger} has ${diff} extra player${diff>1?'s':''} unpaired.</p>`;
+      if (pairs.length === 0) {
+        document.getElementById('pairs').innerHTML = "<p>Not enough players for doubles!</p>";
+        return;
       }
 
-      output.innerHTML = html;
-      output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      let html = `<h3>And the dream team${pairs.length > 1 ? 's are' : ' is'}…</h3>`;
+      html += pairs.map((p, i) =>
+        `<div class="pair${i===0?' highlight':''}" style="animation-delay:${i*0.2}s">${p}</div>`
+      ).join('');
+      document.getElementById('pairs').innerHTML = html;
     }
-
-    genBtn.addEventListener('click', generatePairs);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') generatePairs();
-    });
   </script>
 </body>
 </html>
