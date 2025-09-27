@@ -167,15 +167,18 @@
       canvas.height = window.innerHeight;
       canvas.style.display = "block";
 
-      const numBalls = 15; // standard rack
+      const numBalls = 15;
       const balls = [];
 
+      // One cue ball (white), one black ball, rest red/yellow
       for (let i = 0; i < numBalls; i++) {
-        let color;
+        let color, type;
         if (i === 0) {
-          color = "white"; // cue ball
+          color = "white"; type = "cue";
+        } else if (i === 1) {
+          color = "black"; type = "eight";
         } else {
-          color = Math.random() < 0.5 ? "red" : "yellow";
+          color = Math.random() < 0.5 ? "red" : "yellow"; type = "normal";
         }
 
         balls.push({
@@ -183,8 +186,9 @@
           y: canvas.height / 2,
           dx: (Math.random() - 0.5) * 20,
           dy: (Math.random() - 0.5) * 20,
-          radius: 10,
-          color: color
+          radius: 14,
+          color: color,
+          type: type
         });
       }
 
@@ -195,12 +199,38 @@
         balls.forEach(ball => {
           ball.x += ball.dx;
           ball.y += ball.dy;
+
+          // Draw shaded ball
+          const gradient = ctx.createRadialGradient(ball.x - 5, ball.y - 5, 2, ball.x, ball.y, ball.radius);
+          if (ball.color === "white") {
+            gradient.addColorStop(0, "#fff");
+            gradient.addColorStop(1, "#ccc");
+          } else if (ball.color === "red") {
+            gradient.addColorStop(0, "#ff6666");
+            gradient.addColorStop(1, "#990000");
+          } else if (ball.color === "yellow") {
+            gradient.addColorStop(0, "#ffff99");
+            gradient.addColorStop(1, "#cc9900");
+          } else if (ball.color === "black") {
+            gradient.addColorStop(0, "#555");
+            gradient.addColorStop(1, "#000");
+          }
+
           ctx.beginPath();
           ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-          ctx.fillStyle = ball.color;
+          ctx.fillStyle = gradient;
           ctx.fill();
-          ctx.strokeStyle = "black"; // outline
+          ctx.strokeStyle = "black";
           ctx.stroke();
+
+          // Draw number 8 on black ball
+          if (ball.type === "eight") {
+            ctx.fillStyle = "white";
+            ctx.font = "bold 12px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("8", ball.x, ball.y);
+          }
         });
 
         frames++;
