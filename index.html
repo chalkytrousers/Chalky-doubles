@@ -125,7 +125,7 @@
     <label>Team B size: <input type="number" id="teamB" value="4" min="2"></label>
   </div>
   <div>
-    <label>Doubles to make: <input type="number" id="count" value="1" min="1"></label>
+    <label>Doubles matches to make: <input type="number" id="count" value="1" min="1"></label>
   </div>
   <button onclick="generatePairs()">Rack ’Em!</button>
   <div class="pairs" id="pairs"></div>
@@ -158,18 +158,23 @@
       shuffle(teamA);
       shuffle(teamB);
 
-      let pairs = [];
-      let numMatches = Math.min(Math.floor(sizeA/2), Math.floor(sizeB/2), count);
+      // Drop extra if odd numbers
+      if (teamA.length % 2 !== 0) teamA.pop();
+      if (teamB.length % 2 !== 0) teamB.pop();
 
+      let maxMatches = Math.min(teamA.length/2, teamB.length/2);
+      let numMatches = Math.min(maxMatches, count);
+
+      if (numMatches === 0) {
+        document.getElementById('pairs').innerHTML = "<p>Not enough players for doubles!</p>";
+        return;
+      }
+
+      let pairs = [];
       for (let i=0; i<numMatches; i++) {
         let aTeam = teamA.slice(i*2, i*2+2).join(" + ");
         let bTeam = teamB.slice(i*2, i*2+2).join(" + ");
         pairs.push(`${aTeam}  vs  ${bTeam}`);
-      }
-
-      if (pairs.length === 0) {
-        document.getElementById('pairs').innerHTML = "<p>Not enough players for doubles!</p>";
-        return;
       }
 
       let html = `<h3>And the dream team${pairs.length > 1 ? 's are' : ' is'}…</h3>`;
