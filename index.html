@@ -5,121 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chalky Trousers Doubles Drawer</title>
   <style>
-    :root {
-      --bg1: #000;
-      --bg2: #111;
-      --fg: #fff;
-      --highlight: #0f0;
-    }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, var(--bg1), var(--bg2));
-      color: var(--fg);
+      background: linear-gradient(to bottom, #000, #111);
+      color: #fff;
       text-align: center;
       padding: 20px;
     }
-    h1 {
-      margin-top: 10px;
-      font-size: 28px;
-    }
-    p.description {
-      max-width: 600px;
-      margin: 10px auto 30px;
-      font-size: 15px;
-      line-height: 1.4;
-    }
-    label {
-      margin: 0 10px;
-    }
+    h1 { margin-top: 10px; font-size: 28px; }
+    p.description { max-width: 600px; margin: 10px auto 30px; font-size: 15px; }
+    label { margin: 0 10px; }
     input {
-      width: 60px;
-      padding: 6px;
-      margin: 6px;
-      border-radius: 6px;
-      border: none;
-      text-align: center;
-      font-size: 16px;
+      width: 60px; padding: 6px; margin: 6px;
+      border-radius: 6px; border: none; text-align: center; font-size: 16px;
     }
     button {
-      margin: 24px 0;
-      padding: 14px 28px;
-      border-radius: 12px;
-      border: 2px solid var(--fg);
-      background: var(--fg);
-      color: var(--bg1);
-      font-weight: bold;
-      font-size: 18px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
+      margin: 24px 0; padding: 14px 28px; border-radius: 12px;
+      border: 2px solid #fff; background: #fff; color: #000;
+      font-weight: bold; font-size: 18px; cursor: pointer;
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
-    button::after {
-      content: "";
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-      animation: sweep 3s infinite;
-    }
-    @keyframes sweep {
-      0% { left: -100%; }
-      50% { left: 100%; }
-      100% { left: 100%; }
-    }
-    .pairs {
-      margin-top: 20px;
-    }
-    .pairs h3 {
-      margin-bottom: 15px;
-    }
+    .pairs { margin-top: 20px; }
     .pair {
-      display: inline-block;
-      margin: 8px;
-      padding: 10px 20px;
-      border-radius: 20px;
-      background: #222;
-      font-weight: bold;
-      opacity: 0;
-      transform: scale(0.5);
-      animation: scatter 0.6s forwards;
+      display: inline-block; margin: 8px; padding: 10px 20px;
+      border-radius: 20px; background: #222; font-weight: bold;
     }
-    .pair.highlight {
-      background: green;
-      color: white;
-      box-shadow: 0 0 20px var(--highlight);
-      animation: pulse 1.5s infinite alternate;
-    }
-    @keyframes scatter {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-    @keyframes pulse {
-      from { transform: scale(1); }
-      to { transform: scale(1.1); }
-    }
-    .footer {
-      margin-top: 40px;
-      padding: 16px 0 10px;
-    }
-    .footer img {
-      max-width: 150px;
-      display: block;
-      margin: 0 auto;
-      opacity: .9;
-    }
+    .highlight { background: green; color: white; box-shadow: 0 0 20px #0f0; }
+    .footer { margin-top: 40px; }
+    .footer img { max-width: 150px; display: block; margin: 0 auto; }
   </style>
 </head>
 <body>
   <img src="https://i.imgur.com/yTCNg6N.png" alt="Pool Logo" style="max-width:120px; margin:0 auto; display:block;">
   <h1>Doubles Randomiser</h1>
   <p class="description">
-    Welcome to the Chalky Trousers Doubles Drawer. Pop your team sizes in, smash that "Rack 'Em" button, 
+    Welcome to the Chalky Trousers Doubles Drawer. Pop your team sizes in, smash that "Rack 'Em" button,
     and let fate (and a dodgy algorithm) decide who’s lumped with who.
   </p>
+
   <div>
     <label>Team A size: <input type="number" id="teamA" value="4" min="2"></label>
     <label>Team B size: <input type="number" id="teamB" value="4" min="2"></label>
@@ -128,7 +52,9 @@
     <label>Doubles matches to make: <input type="number" id="count" value="1" min="1"></label>
   </div>
   <button onclick="generatePairs()">Rack ’Em!</button>
+
   <div class="pairs" id="pairs"></div>
+
   <div class="footer">
     <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo">
   </div>
@@ -147,23 +73,18 @@
       const sizeB = parseInt(document.getElementById('teamB').value);
       const count = parseInt(document.getElementById('count').value);
 
-      if (sizeA < 2 || sizeB < 2) {
-        document.getElementById('pairs').innerHTML = "<p>Both teams need at least 2 players!</p>";
-        return;
-      }
-
       let teamA = Array.from({length: sizeA}, (_, i) => "A" + (i+1));
       let teamB = Array.from({length: sizeB}, (_, i) => "B" + (i+1));
 
       shuffle(teamA);
       shuffle(teamB);
 
-      // Drop extra if odd numbers
+      // Ensure even numbers only
       if (teamA.length % 2 !== 0) teamA.pop();
       if (teamB.length % 2 !== 0) teamB.pop();
 
       let maxMatches = Math.min(teamA.length/2, teamB.length/2);
-      let numMatches = Math.min(maxMatches, count);
+      let numMatches = Math.min(count, maxMatches);
 
       if (numMatches === 0) {
         document.getElementById('pairs').innerHTML = "<p>Not enough players for doubles!</p>";
@@ -172,15 +93,16 @@
 
       let pairs = [];
       for (let i=0; i<numMatches; i++) {
-        let aTeam = teamA.slice(i*2, i*2+2).join(" + ");
-        let bTeam = teamB.slice(i*2, i*2+2).join(" + ");
-        pairs.push(`${aTeam}  vs  ${bTeam}`);
+        let aTeam = teamA[i*2] + " + " + teamA[i*2+1];
+        let bTeam = teamB[i*2] + " + " + teamB[i*2+1];
+        pairs.push(`${aTeam} vs ${bTeam}`);
       }
 
       let html = `<h3>And the dream team${pairs.length > 1 ? 's are' : ' is'}…</h3>`;
-      html += pairs.map((p, i) =>
-        `<div class="pair${i===0?' highlight':''}" style="animation-delay:${i*0.2}s">${p}</div>`
-      ).join('');
+      pairs.forEach((p, i) => {
+        html += `<div class="pair${i===0?' highlight':''}">${p}</div>`;
+      });
+
       document.getElementById('pairs').innerHTML = html;
     }
   </script>
