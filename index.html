@@ -184,8 +184,8 @@
         balls.push({
           x: canvas.width / 2,
           y: canvas.height / 2,
-          dx: (Math.random() - 0.5) * 20,
-          dy: (Math.random() - 0.5) * 20,
+          dx: (Math.random() - 0.5) * 15,
+          dy: (Math.random() - 0.5) * 15,
           radius: 14,
           color: color,
           type: type
@@ -199,6 +199,14 @@
         balls.forEach(ball => {
           ball.x += ball.dx;
           ball.y += ball.dy;
+
+          // Bounce off walls
+          if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+            ball.dx *= -1;
+          }
+          if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+            ball.dy *= -1;
+          }
 
           // Draw shaded ball
           const gradient = ctx.createRadialGradient(ball.x - 5, ball.y - 5, 2, ball.x, ball.y, ball.radius);
@@ -234,7 +242,7 @@
         });
 
         frames++;
-        if (frames < 30) {
+        if (frames < 60) { // run animation longer
           requestAnimationFrame(animate);
         } else {
           canvas.style.display = "none";
