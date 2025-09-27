@@ -13,185 +13,39 @@
       margin: 0;
       padding: 0;
     }
-    h1 {
+    .logo {
       margin-top: 20px;
     }
-    .container {
+    h1 {
+      margin: 10px 0;
+    }
+    p {
+      margin: 10px auto 20px;
+      width: 90%;
       max-width: 500px;
-      margin: auto;
-      padding: 20px;
+      line-height: 1.5em;
+    }
+    .inputs {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      align-items: center;
+      gap: 5px;
     }
     input {
       width: 60px;
       text-align: center;
-      margin: 5px;
-      padding: 5px;
       font-size: 16px;
+      padding: 5px;
       border-radius: 5px;
       border: none;
     }
-    label {
-      display: inline-block;
-      margin: 10px 0 5px;
-    }
-    .glow-button {
-      margin: 40px auto 40px;
-      padding: 12px 28px;
-      font-size: 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background-color: #111;
-      color: #fff;
-      box-shadow: 0 0 20px 5px #00ff00;
-      transition: transform 0.2s ease;
-    }
-    .glow-button:hover {
-      transform: scale(1.1);
-    }
-    .pairs {
-      margin-top: 20px;
-    }
-    .pair {
-      background: #222;
-      margin: 8px auto;
-      padding: 10px 20px;
-      border-radius: 20px;
-      display: inline-block;
-      font-weight: bold;
-      font-size: 18px;
-    }
-    .highlight {
-      background: #00ff00;
-      color: black;
-      box-shadow: 0 0 20px #00ff00;
-    }
-    .logo {
-      margin-top: 30px;
-      margin-bottom: 20px;
-    }
-    .break-animation {
-      width: 100%;
-      height: 100px;
-      position: relative;
-      margin: 20px 0;
-      overflow: hidden;
-      display: none;
-    }
-    .cue-ball {
-      width: 30px;
-      height: 30px;
-      background: white;
-      border-radius: 50%;
-      position: absolute;
-      top: 35px;
-      left: -40px;
-      animation: shoot 1s forwards;
-    }
-    @keyframes shoot {
-      to { left: 100%; }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <img src="https://raw.githubusercontent.com/chalkytrousers/Chalky-doubles/main/logo.png" 
-         alt="Chalky Logo" width="120" class="logo">
-
-    <h1>Doubles Randomiser</h1>
-    <p>
-      Welcome to the Chalky Trousers Doubles Drawer.  
-      Pop your team sizes in, smash that "Rack 'Em" button,  
-      and let fate (and a dodgy algorithm) decide who’s lumped with who.
-    </p>
-
-    <div>
-      <label>Team A size:</label>
-      <input type="number" id="teamASize" value="4" min="2">
-      <label>Team B size:</label>
-      <input type="number" id="teamBSize" value="4" min="2">
-    </div>
-    <div>
-      <label>Doubles matches to make:</label>
-      <input type="number" id="doublesToMake" value="1" min="1">
-    </div>
-
-    <button class="glow-button" onclick="onRackEmClick()">Rack ’Em!</button>
-
-    <div class="break-animation" id="breakAnimation">
-      <div class="cue-ball"></div>
-    </div>
-
-    <h2>And the dream teams are…</h2>
-    <div class="pairs" id="pairs"></div>
-
-    <div class="logo">
-      <img src="https://raw.githubusercontent.com/chalkytrousers/Chalky-doubles/main/chalky-logo.png" 
-           alt="Chalky Trousers Logo" width="200">
-    </div>
-  </div>
-
-  <script>
-    function validateInput(teamASize, teamBSize, doublesToMake) {
-      if (teamASize < doublesToMake * 2) {
-        alert(`Not enough players in Team A. You need at least ${doublesToMake * 2} players.`);
-        return false;
-      }
-      if (teamBSize < doublesToMake * 2) {
-        alert(`Not enough players in Team B. You need at least ${doublesToMake * 2} players.`);
-        return false;
-      }
-      return true;
-    }
-
-    function onRackEmClick() {
-      const teamASize = parseInt(document.getElementById("teamASize").value);
-      const teamBSize = parseInt(document.getElementById("teamBSize").value);
-      const doublesToMake = parseInt(document.getElementById("doublesToMake").value);
-
-      if (!validateInput(teamASize, teamBSize, doublesToMake)) return;
-
-      // play break animation
-      const animation = document.getElementById("breakAnimation");
-      const cueBall = animation.querySelector(".cue-ball");
-      cueBall.style.left = "-40px"; // reset position
-      animation.style.display = "block";
-      cueBall.style.animation = "none";
-      void cueBall.offsetWidth; // trigger reflow
-      cueBall.style.animation = "shoot 1s forwards";
-
-      setTimeout(() => {
-        animation.style.display = "none";
-        generatePairs(teamASize, teamBSize, doublesToMake);
-      }, 1000);
-    }
-
-    function generatePairs(teamASize, teamBSize, doublesToMake) {
-      const teamA = Array.from({length: teamASize}, (_, i) => `A${i+1}`);
-      const teamB = Array.from({length: teamBSize}, (_, i) => `B${i+1}`);
-      shuffle(teamA);
-      shuffle(teamB);
-
-      const pairsContainer = document.getElementById("pairs");
-      pairsContainer.innerHTML = "";
-
-      for (let i = 0; i < doublesToMake; i++) {
-        const aPlayers = teamA.splice(0, 2);
-        const bPlayers = teamB.splice(0, 2);
-
-        const pairDiv = document.createElement("div");
-        pairDiv.classList.add("pair");
-        pairDiv.textContent = `${aPlayers.join(" + ")} vs ${bPlayers.join(" + ")}`;
-        pairsContainer.appendChild(pairDiv);
-      }
-    }
-
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
-  </script>
-</body>
-</html>
+    .button-container {
+      margin: 40px 0
