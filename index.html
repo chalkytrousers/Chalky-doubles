@@ -20,10 +20,11 @@
     h2 { font-size: 28px; margin: 10px 0 6px; letter-spacing: 2px; }
     p.description { font-size: 16px; color: var(--muted); margin: 0 0 22px; line-height: 1.45; }
     .controls { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-    label { font-size: 18px; }
+    label { font-size: 18px; display: flex; flex-direction: column; align-items: center; }
     input[type="number"] {
       width: 80px; padding: 8px; text-align: center;
       border-radius: 8px; border: none; font-size: 16px;
+      margin-top: 4px;
     }
     button {
       margin: 16px 0 8px; padding: 12px 24px;
@@ -100,6 +101,9 @@
       <label>Team B size:
         <input type="number" id="teamB" value="4" min="1" inputmode="numeric">
       </label>
+      <label>Doubles to make:
+        <input type="number" id="numPairs" value="1" min="1" inputmode="numeric">
+      </label>
     </div>
 
     <button id="genBtn" type="button">Rack ’Em!</button>
@@ -132,6 +136,7 @@
     function generatePairs() {
       const a = validNum(document.getElementById('teamA').value);
       const b = validNum(document.getElementById('teamB').value);
+      const numPairs = validNum(document.getElementById('numPairs').value) || 1;
 
       if (a === null || b === null) {
         output.innerHTML = `<p style="color:#f88">Oi! Enter at least 1 player for each team.</p>`;
@@ -141,7 +146,7 @@
 
       const teamA = shuffle(Array.from({ length: a }, (_, i) => `A${i + 1}`));
       const teamB = shuffle(Array.from({ length: b }, (_, i) => `B${i + 1}`));
-      const count = Math.min(teamA.length, teamB.length);
+      const count = Math.min(teamA.length, teamB.length, numPairs);
 
       const pairs = [];
       for (let i = 0; i < count; i++) pairs.push(`${teamA[i]} + ${teamB[i]}`);
@@ -152,6 +157,10 @@
         const y = Math.floor(Math.random() * 80 - 40) + "px";
         return `<li style="--x:${x};--y:${y}">${p}</li>`;
       }).join('')}</ul>`;
+
+      if (numPairs > count) {
+        html += `<p style="color:#bbb;margin-top:10px;">Only ${count} pairs possible with current players.</p>`;
+      }
 
       if (teamA.length !== teamB.length) {
         const diff = Math.abs(teamA.length - teamB.length);
