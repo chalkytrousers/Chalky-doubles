@@ -2,194 +2,218 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Doubles Randomiser</title>
   <style>
     body {
-      background-color: black;
-      color: white;
       font-family: Arial, sans-serif;
       text-align: center;
+      background-color: #000;
+      color: white;
       margin: 0;
       padding: 0;
     }
+
     h1 {
       margin-top: 10px;
     }
-    .logo {
-      width: 120px;
-      margin: 20px auto;
-      display: block;
-    }
+
     .description {
-      max-width: 500px;
-      margin: 0 auto 20px;
+      margin: 20px auto;
+      max-width: 600px;
       font-size: 16px;
     }
+
     .inputs {
-      margin: 20px 0;
+      margin: 20px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
-    .inputs label {
-      margin: 0 10px;
+
+    .inputs div {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      align-items: center;
     }
+
     input {
       width: 50px;
       text-align: center;
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
     }
-    #rackEm {
-      background: black;
-      border: 2px solid white;
+
+    button {
+      background-color: #111;
       color: white;
-      padding: 10px 20px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
       font-size: 18px;
       margin: 30px 0;
-      cursor: pointer;
-      border-radius: 8px;
-      box-shadow: 0 0 20px 5px rgba(0, 255, 0, 0.8);
-      transition: all 0.3s ease-in-out;
+      box-shadow: 0 0 20px #00ff00;
+      transition: all 0.3s ease;
     }
-    #rackEm:hover {
-      box-shadow: 0 0 30px 10px rgba(0, 255, 0, 1);
+
+    button:hover {
+      box-shadow: 0 0 35px #00ff00;
     }
-    #results {
-      margin: 20px 0;
+
+    .results {
+      margin: 20px auto;
+      font-size: 20px;
     }
+
     .match {
       display: inline-block;
-      background: #333;
+      margin: 10px auto;
       padding: 10px 20px;
       border-radius: 20px;
-      margin: 10px 0;
-      font-size: 18px;
+      background: #333;
     }
-    .highlight {
-      background: #00ff00;
-      color: black;
-      font-weight: bold;
-      box-shadow: 0 0 20px #00ff00;
-    }
-    .footer-logo {
-      width: 150px;
-      margin: 40px auto 20px;
+
+    .logo {
+      margin: 30px auto;
       display: block;
+      max-width: 200px;
     }
-    canvas {
-      display: block;
-      margin: 0 auto;
+
+    .break-animation {
+      position: relative;
+      height: 120px;
+      margin: 20px auto;
+      overflow: hidden;
+    }
+
+    .ball {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      position: absolute;
+      top: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+    }
+
+    .white { background: white; }
+    .red { background: red; }
+    .yellow { background: yellow; }
+    .black { background: black; }
+
+    .animate {
+      animation: breakShot 1s forwards;
+    }
+
+    @keyframes breakShot {
+      from { opacity: 1; top: 45px; left: 50%; }
+      to { opacity: 0; top: calc(45px + (randY * 1px)); left: calc(50% + (randX * 1px)); }
     }
   </style>
 </head>
 <body>
-  <img src="https://i.imgur.com/yTCNg6N.png" alt="logo" class="logo">
+  <img src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Trousers Logo" class="logo" style="max-width:120px; margin-top:20px;">
   <h1>Doubles Randomiser</h1>
   <p class="description">
-    Welcome to the Chalky Trousers Doubles Drawer. Pop your team sizes in, smash that "Rack 'Em" button, 
+    Welcome to the Chalky Trousers Doubles Drawer. Pop your team sizes in, smash that "Rack 'Em" button,
     and let fate (and a dodgy algorithm) decide who’s lumped with who.
   </p>
+
   <div class="inputs">
-    <label>Team A size: <input type="number" id="teamASize" value="4" min="2"></label>
-    <label>Team B size: <input type="number" id="teamBSize" value="4" min="2"></label>
-    <br><br>
-    <label>Doubles matches to make: <input type="number" id="numMatches" value="1" min="1"></label>
+    <div>
+      <label>Team A size:</label>
+      <input type="number" id="teamA" value="4" min="2">
+      <label>Team B size:</label>
+      <input type="number" id="teamB" value="4" min="2">
+    </div>
+    <div>
+      <label>Doubles matches to make:</label>
+      <input type="number" id="numMatches" value="1" min="1">
+    </div>
   </div>
-  <button id="rackEm">Rack ’Em!</button>
 
-  <h2>And the dream teams are...</h2>
-  <div id="results"></div>
+  <button id="generateButton">Rack ’Em!</button>
 
-  <img src="https://i.imgur.com/Tmxwc47.png" alt="footer logo" class="footer-logo">
+  <div class="break-animation" id="breakAnimation"></div>
 
-  <canvas id="breakCanvas" width="300" height="150"></canvas>
+  <div class="results" id="results">
+    <p>And the dream teams are...</p>
+  </div>
 
-  <!-- Break sound -->
-  <audio id="break-sound" src="billiard-sound-02-28842.mp3" preload="auto"></audio>
+  <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo" class="logo">
+
+  <!-- Sound file -->
+  <audio id="break-sound" src="sounds/breakshot.mp3"></audio>
 
   <script>
-    const canvas = document.getElementById("breakCanvas");
-    const ctx = canvas.getContext("2d");
-
-    function drawBalls() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const balls = [
-        {x: 100, y: 75, color: "white"},
-        {x: 200, y: 65, color: "red"},
-        {x: 200, y: 85, color: "yellow"},
-        {x: 220, y: 75, color: "black"}
-      ];
-      balls.forEach(ball => {
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, 10, 0, Math.PI * 2);
-        ctx.fillStyle = ball.color;
-        ctx.fill();
-        ctx.strokeStyle = "white";
-        ctx.stroke();
-      });
-    }
-
-    function animateBreak() {
-      let frame = 0;
-      const interval = setInterval(() => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (frame < 10) {
-          ctx.beginPath();
-          ctx.arc(100 + frame * 10, 75, 10, 0, Math.PI * 2);
-          ctx.fillStyle = "white";
-          ctx.fill();
-          ctx.strokeStyle = "white";
-          ctx.stroke();
-        } else {
-          drawBalls();
-        }
-        frame++;
-        if (frame > 15) clearInterval(interval);
-      }, 50);
-    }
-
     function generateMatches() {
-      const teamASize = parseInt(document.getElementById("teamASize").value);
-      const teamBSize = parseInt(document.getElementById("teamBSize").value);
+      const teamASize = parseInt(document.getElementById("teamA").value);
+      const teamBSize = parseInt(document.getElementById("teamB").value);
       const numMatches = parseInt(document.getElementById("numMatches").value);
       const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "";
+
+      resultsDiv.innerHTML = "<p>And the dream teams are...</p>";
 
       if (teamASize < 2 || teamBSize < 2) {
-        resultsDiv.innerHTML = "<p>Both teams need at least 2 players for doubles.</p>";
+        resultsDiv.innerHTML += "<p style='color:red'>❌ Each team must have at least 2 players!</p>";
         return;
       }
 
-      if (numMatches > Math.floor(teamASize / 2) || numMatches > Math.floor(teamBSize / 2)) {
-        resultsDiv.innerHTML = "<p>Not enough players in one of the teams for that many doubles matches!</p>";
-        return;
-      }
+      const teamA = Array.from({length: teamASize}, (_, i) => `A${i+1}`);
+      const teamB = Array.from({length: teamBSize}, (_, i) => `B${i+1}`);
 
-      let teamAPlayers = Array.from({length: teamASize}, (_, i) => `A${i+1}`);
-      let teamBPlayers = Array.from({length: teamBSize}, (_, i) => `B${i+1}`);
+      for (let m = 0; m < numMatches; m++) {
+        if (teamA.length < 2 || teamB.length < 2) {
+          resultsDiv.innerHTML += "<p style='color:red'>⚠️ Not enough players left to form more doubles!</p>";
+          break;
+        }
 
-      teamAPlayers = teamAPlayers.sort(() => Math.random() - 0.5);
-      teamBPlayers = teamBPlayers.sort(() => Math.random() - 0.5);
+        const aPlayers = teamA.splice(Math.floor(Math.random() * teamA.length), 1)
+          .concat(teamA.splice(Math.floor(Math.random() * teamA.length), 1));
+        const bPlayers = teamB.splice(Math.floor(Math.random() * teamB.length), 1)
+          .concat(teamB.splice(Math.floor(Math.random() * teamB.length), 1));
 
-      for (let i = 0; i < numMatches; i++) {
-        const teamA = [teamAPlayers.pop(), teamAPlayers.pop()];
-        const teamB = [teamBPlayers.pop(), teamBPlayers.pop()];
         const matchDiv = document.createElement("div");
-        matchDiv.classList.add("match");
-        matchDiv.textContent = `${teamA[0]} + ${teamA[1]} vs ${teamB[0]} + ${teamB[1]}`;
+        matchDiv.className = "match";
+        matchDiv.textContent = `${aPlayers.join(" + ")} vs ${bPlayers.join(" + ")}`;
         resultsDiv.appendChild(matchDiv);
       }
     }
 
-    document.getElementById("rackEm").addEventListener("click", () => {
-      // Play sound
-      const sound = document.getElementById("break-sound");
-      sound.currentTime = 0;
-      sound.play();
+    function triggerBreakAnimation() {
+      const animationDiv = document.getElementById("breakAnimation");
+      animationDiv.innerHTML = "";
 
-      // Run animation + generate matches
-      animateBreak();
+      const colors = ["white", "red", "red", "yellow", "yellow", "black"];
+      colors.forEach(color => {
+        const ball = document.createElement("div");
+        ball.className = `ball ${color}`;
+        animationDiv.appendChild(ball);
+
+        const randX = (Math.random() - 0.5) * 300;
+        const randY = (Math.random() - 0.5) * 200;
+
+        ball.animate([
+          { opacity: 1, top: "45px", left: "50%" },
+          { opacity: 0, top: `${45 + randY}px`, left: `calc(50% + ${randX}px)` }
+        ], { duration: 800, fill: "forwards" });
+      });
+    }
+
+    document.getElementById("generateButton").addEventListener("click", function() {
+      // play sound
+      const breakSound = document.getElementById("break-sound");
+      breakSound.currentTime = 0;
+      breakSound.play().catch(err => console.log("Audio play blocked:", err));
+
+      // animate balls + generate matches
+      triggerBreakAnimation();
       generateMatches();
     });
-
-    drawBalls();
   </script>
 </body>
 </html>
