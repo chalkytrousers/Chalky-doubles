@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Chalky Trousers Doubles Randomiser</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root { --bg:#000; --fg:#fff; --muted:#bbb; --card:#111; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif; background: var(--bg); color: var(--fg);
+      margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+    }
+    .wrap { width: 100%; max-width: 640px; margin: 0 auto; padding: 20px; text-align: center; }
+    img.logo { max-width: 200px; display: block; margin: 20px auto; }
+    h2 { font-size: 28px; margin: 10px 0 6px; letter-spacing: 2px; }
+    p.description { font-size: 16px; color: var(--muted); margin: 0 0 22px; line-height: 1.45; }
+    .controls { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    label { font-size: 18px; }
+    input[type="number"] {
+      width: 80px; padding: 8px; text-align: center; border-radius: 8px; border: none; font-size: 16px;
+    }
+    button {
+      margin: 16px 0 8px; padding: 12px 24px; border-radius: 10px; border: 2px solid var(--fg);
+      background: var(--fg); color: var(--bg); font-weight: bold; font-size: 16px; cursor: pointer; transition: .25s;
+    }
+    button:hover { background: var(--bg); color: var(--fg); }
+    #output { margin-top: 16px; }
+    #output h3 { margin: 10px 0 12px; }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { margin: 8px 0; padding: 10px; background: var(--card); border-radius: 8px; font-size: 18px; }
+    .footer { margin-top: auto; padding: 24px 0 10px; }
+    .footer img { max-width: 150px; display: block; margin: 0 auto; opacity: .9; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <!-- Top Logo -->
+    <img class="logo" src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Trousers Logo">
+
+    <h2>Doubles Randomiser</h2>
+    <p class="description">
+      Welcome to the Chalky Trousers Doubles Generator. Enter number of players per team,
+      click “Generate” and doubles teams will be created.
+    </p>
+
+    <div class="controls">
+      <label>Team A size:
+        <input type="number" id="teamA" value="4" min="1" inputmode="numeric">
+      </label>
+      <label>Team B size:
+        <input type="number" id="teamB" value="4" min="1" inputmode="numeric">
+      </label>
+    </div>
+
+    <button id="genBtn" type="button">Generate Pairs</button>
+
+    <div id="output" aria-live="polite"></div>
+  </main>
+
+  <!-- Bottom (footer) logo -->
+  <div class="footer">
+    <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Footer Logo">
+  </div>
+
+  <script>
+    const output = document.getElementById('output');
+    const genBtn = document.getElementById('genBtn');
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function validNum(v) {
+      const n = Number(v);
+      return Number.isFinite(n) && n >= 1 ? Math.floor(n) : null;
+    }
+
+    function generatePairs() {
+      const a = validNum(document.getElementById('teamA').value);
+      const b = validNum(document.getElementById('teamB').value);
+
+      if (a === null || b === null) {
+        output.innerHTML = `<p style="color:#f88">Please enter numbers ≥ 1 for both teams.</p>`;
+        output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      const teamA = shuffle(Array.from({ length: a }, (_, i) => `A${i + 1}`));
+      const teamB = shuffle(Array.from({ length: b }, (_, i) => `B${i + 1}`));
+      const count = Math.min(teamA.length, teamB.length);
+
+      const pairs = [];
+      for (let i = 0; i < count; i++) pairs.push(`${teamA[i]} + ${teamB[i]}`);
+
+      let html = `<h3>Pairs:</h3>`;
+      html += `<ul>${pairs.map(p => `<li>${p}</li>`).join('')}</ul>`;
+
+      if (teamA.length !== teamB.length) {
+        const diff = Math.abs(teamA.length - teamB.length);
+        const bigger = teamA.length > teamB.length ? 'Team A' : 'Team B';
+        html += `<p style="color:#bbb;margin-top:10px;">Note: ${bigger} has ${diff} extra player${diff>1?'s':''} unpaired.</p>`;
+      }
+
+      output.innerHTML = html;
+      output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    genBtn.addEventListener('click', generatePairs);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') generatePairs();
+    });
+  </script>
+</body>
+</html>
