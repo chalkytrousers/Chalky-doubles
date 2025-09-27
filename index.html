@@ -5,11 +5,15 @@
   <title>Chalky Trousers Doubles Randomiser</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    :root { --bg:#000; --fg:#fff; --muted:#bbb; --card:#111; }
+    :root { --bg1:#000; --bg2:#111; --fg:#fff; --muted:#bbb; --card:#111; }
     * { box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif; background: var(--bg); color: var(--fg);
-      margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 100%);
+      color: var(--fg);
+      margin: 0; min-height: 100vh;
+      display: flex; flex-direction: column;
+      overflow-x: hidden;
     }
     .wrap { width: 100%; max-width: 640px; margin: 0 auto; padding: 20px; text-align: center; }
     img.logo { max-width: 200px; display: block; margin: 20px auto; }
@@ -18,30 +22,50 @@
     .controls { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
     label { font-size: 18px; }
     input[type="number"] {
-      width: 80px; padding: 8px; text-align: center; border-radius: 8px; border: none; font-size: 16px;
+      width: 80px; padding: 8px; text-align: center;
+      border-radius: 8px; border: none; font-size: 16px;
     }
     button {
-      margin: 16px 0 8px; padding: 12px 24px; border-radius: 10px; border: 2px solid var(--fg);
-      background: var(--fg); color: var(--bg); font-weight: bold; font-size: 16px; cursor: pointer; transition: .25s;
+      margin: 16px 0 8px; padding: 12px 24px;
+      border-radius: 10px; border: 2px solid var(--fg);
+      background: var(--fg); color: var(--bg1);
+      font-weight: bold; font-size: 16px;
+      cursor: pointer; position: relative;
+      overflow: hidden;
     }
-    button:hover { background: var(--bg); color: var(--fg); }
+    button::before {
+      content: "";
+      position: absolute;
+      top: 0; left: -75%;
+      width: 50%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
+      transform: skewX(-25deg);
+    }
+    button:hover::before {
+      animation: sweep 1.2s ease;
+    }
+    @keyframes sweep {
+      0% { left: -75%; }
+      100% { left: 125%; }
+    }
+
     #output { margin-top: 16px; }
     #output h3 { margin: 10px 0 12px; }
 
     ul { list-style: none; padding: 0; margin: 0; }
     li {
-      margin: 8px 0; padding: 10px 20px; background: var(--card); border-radius: 50px;
-      font-size: 18px; width: fit-content; margin-left: auto; margin-right: auto;
+      margin: 8px 0; padding: 10px 20px; background: var(--card);
+      border-radius: 50px; font-size: 18px; width: fit-content;
+      margin-left: auto; margin-right: auto;
       opacity: 0; transform: translateX(-50px);
       animation: rollIn 0.6s forwards;
+      opacity: 0.8;
     }
-    li:nth-child(1) { 
+    li:first-child {
+      background: #030; color: #fff; font-weight: bold;
+      border: 2px solid #0f0; box-shadow: 0 0 15px #0f0;
       animation: bounceIn 0.9s forwards;
-      background: #030; 
-      color: #fff;
-      font-weight: bold;
-      border: 2px solid #0f0;
-      box-shadow: 0 0 15px #0f0;
+      opacity: 1;
     }
     li:nth-child(2) { animation-delay: 0.3s; }
     li:nth-child(3) { animation-delay: 0.5s; }
@@ -53,12 +77,33 @@
 
     @keyframes rollIn {
       from { opacity: 0; transform: translateX(-50px) rotate(-90deg); }
-      to { opacity: 1; transform: translateX(0) rotate(0); }
+      to { opacity: 0.8; transform: translateX(0) rotate(0); }
     }
     @keyframes bounceIn {
       0% { transform: scale(0.6); opacity: 0; }
       50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(1.05); }
+      100% { transform: scale(1.05); opacity: 1; }
+    }
+
+    /* Cue strike animation */
+    .cue {
+      position: fixed;
+      top: 50%; left: -200px;
+      width: 200px; height: 4px;
+      background: #fff;
+      box-shadow: 0 0 10px #0f0;
+      transform: rotate(2deg);
+      z-index: 999;
+      opacity: 0;
+    }
+    .cue.animate {
+      opacity: 1;
+      animation: cueStrike 0.6s ease-out;
+    }
+    @keyframes cueStrike {
+      0% { left: -200px; }
+      50% { left: 50%; }
+      100% { left: 120%; opacity: 0; }
     }
 
     .footer { margin-top: auto; padding: 24px 0 10px; }
@@ -66,6 +111,8 @@
   </style>
 </head>
 <body>
+  <div class="cue" id="cue"></div>
+
   <main class="wrap">
     <!-- Top Logo -->
     <img class="logo" src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Trousers Logo">
@@ -98,6 +145,7 @@
   <script>
     const output = document.getElementById('output');
     const genBtn = document.getElementById('genBtn');
+    const cue = document.getElementById('cue');
 
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
@@ -113,6 +161,11 @@
     }
 
     function generatePairs() {
+      // trigger cue animation
+      cue.classList.remove("animate");
+      void cue.offsetWidth; // reset animation
+      cue.classList.add("animate");
+
       const a = validNum(document.getElementById('teamA').value);
       const b = validNum(document.getElementById('teamB').value);
 
@@ -138,8 +191,10 @@
         html += `<p style="color:#bbb;margin-top:10px;">Note: ${bigger} has ${diff} extra player${diff>1?'s':''} unpaired.</p>`;
       }
 
-      output.innerHTML = html;
-      output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => { // delay so cue anim finishes first
+        output.innerHTML = html;
+        output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 500);
     }
 
     genBtn.addEventListener('click', generatePairs);
