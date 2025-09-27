@@ -57,8 +57,7 @@
       margin: 8px 0; padding: 10px 20px; background: var(--card);
       border-radius: 50px; font-size: 18px; width: fit-content;
       margin-left: auto; margin-right: auto;
-      opacity: 0; transform: translateX(-50px);
-      animation: rollIn 0.6s forwards;
+      opacity: 0; animation: fadeIn 0.6s forwards;
       opacity: 0.8;
     }
     li:first-child {
@@ -75,9 +74,9 @@
     li:nth-child(7) { animation-delay: 1.3s; }
     li:nth-child(8) { animation-delay: 1.5s; }
 
-    @keyframes rollIn {
-      from { opacity: 0; transform: translateX(-50px) rotate(-90deg); }
-      to { opacity: 0.8; transform: translateX(0) rotate(0); }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 0.8; }
     }
     @keyframes bounceIn {
       0% { transform: scale(0.6); opacity: 0; }
@@ -85,34 +84,11 @@
       100% { transform: scale(1.05); opacity: 1; }
     }
 
-    /* Cue strike animation */
-    .cue {
-      position: fixed;
-      top: 50%; left: -200px;
-      width: 200px; height: 4px;
-      background: #fff;
-      box-shadow: 0 0 10px #0f0;
-      transform: rotate(2deg);
-      z-index: 999;
-      opacity: 0;
-    }
-    .cue.animate {
-      opacity: 1;
-      animation: cueStrike 0.6s ease-out;
-    }
-    @keyframes cueStrike {
-      0% { left: -200px; }
-      50% { left: 50%; }
-      100% { left: 120%; opacity: 0; }
-    }
-
     .footer { margin-top: auto; padding: 24px 0 10px; }
     .footer img { max-width: 150px; display: block; margin: 0 auto; opacity: .9; }
   </style>
 </head>
 <body>
-  <div class="cue" id="cue"></div>
-
   <main class="wrap">
     <!-- Top Logo -->
     <img class="logo" src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Trousers Logo">
@@ -145,7 +121,6 @@
   <script>
     const output = document.getElementById('output');
     const genBtn = document.getElementById('genBtn');
-    const cue = document.getElementById('cue');
 
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
@@ -161,11 +136,6 @@
     }
 
     function generatePairs() {
-      // trigger cue animation
-      cue.classList.remove("animate");
-      void cue.offsetWidth; // reset animation
-      cue.classList.add("animate");
-
       const a = validNum(document.getElementById('teamA').value);
       const b = validNum(document.getElementById('teamB').value);
 
@@ -191,10 +161,8 @@
         html += `<p style="color:#bbb;margin-top:10px;">Note: ${bigger} has ${diff} extra player${diff>1?'s':''} unpaired.</p>`;
       }
 
-      setTimeout(() => { // delay so cue anim finishes first
-        output.innerHTML = html;
-        output.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 500);
+      output.innerHTML = html;
+      output.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     genBtn.addEventListener('click', generatePairs);
