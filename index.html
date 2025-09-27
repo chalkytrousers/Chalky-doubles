@@ -8,162 +8,189 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background: #000;
+      background-color: #000;
       color: white;
       margin: 0;
       padding: 0;
     }
-
-    .logo-top {
-      width: 140px;
-      margin: 20px auto 10px;
-      display: block;
-    }
-
     h1 {
-      margin: 10px 0;
+      margin-top: 20px;
     }
-
-    p {
-      max-width: 90%;
-      margin: 0 auto 20px;
-      font-size: 15px;
-      line-height: 1.4em;
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
     }
-
-    .form-row {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 14px;
-    }
-
-    input[type="number"] {
+    input {
       width: 60px;
-      padding: 5px;
       text-align: center;
+      margin: 5px;
+      padding: 5px;
       font-size: 16px;
-      margin-top: 5px;
+      border-radius: 5px;
+      border: none;
     }
-
-    .button-container {
-      margin: 40px 0 25px; /* increased top margin to move button down */
-    }
-
-    button {
-      background: #111;
-      color: white;
-      border: 2px solid #0f0;
-      padding: 12px 24px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: transform 0.2s, box-shadow 0.3s;
-      box-shadow: 0 0 15px #0f0;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px #0f0, 0 0 50px #0f0;
-    }
-
-    .results {
-      margin-top: 25px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .match {
+    label {
       display: inline-block;
+      margin: 10px 0 5px;
+    }
+    .glow-button {
+      margin: 40px auto 40px;
+      padding: 12px 28px;
+      font-size: 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #111;
+      color: #fff;
+      box-shadow: 0 0 20px 5px #00ff00;
+      transition: transform 0.2s ease;
+    }
+    .glow-button:hover {
+      transform: scale(1.1);
+    }
+    .pairs {
+      margin-top: 20px;
+    }
+    .pair {
       background: #222;
+      margin: 8px auto;
       padding: 10px 20px;
       border-radius: 20px;
-      margin: 10px auto;
-      font-size: 18px;
+      display: inline-block;
       font-weight: bold;
+      font-size: 18px;
     }
-
-    .logo-bottom {
-      width: 160px;
-      margin: 40px auto 20px; /* nudged up slightly from bottom */
-      display: block;
+    .highlight {
+      background: #00ff00;
+      color: black;
+      box-shadow: 0 0 20px #00ff00;
+    }
+    .logo {
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+    .break-animation {
+      width: 100%;
+      height: 100px;
+      position: relative;
+      margin: 20px 0;
+      overflow: hidden;
+      display: none;
+    }
+    .cue-ball {
+      width: 30px;
+      height: 30px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 35px;
+      left: -40px;
+      animation: shoot 1s forwards;
+    }
+    @keyframes shoot {
+      to { left: 100%; }
     }
   </style>
 </head>
 <body>
-  <img src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Trousers Logo" class="logo-top">
+  <div class="container">
+    <img src="https://raw.githubusercontent.com/chalkytrousers/Chalky-doubles/main/logo.png" 
+         alt="Chalky Logo" width="120" class="logo">
 
-  <h1>Doubles Randomiser</h1>
-  <p>
-    Welcome to the Chalky Trousers Doubles Drawer.  
-    Pop your team sizes in, smash that "Rack 'Em" button,  
-    and let fate (and a dodgy algorithm) decide who’s lumped with who.
-  </p>
+    <h1>Doubles Randomiser</h1>
+    <p>
+      Welcome to the Chalky Trousers Doubles Drawer.  
+      Pop your team sizes in, smash that "Rack 'Em" button,  
+      and let fate (and a dodgy algorithm) decide who’s lumped with who.
+    </p>
 
-  <div class="form-row">
-    <label>Team A size:
-      <input type="number" id="teamA" value="4" min="2">
-    </label>
-    <label>Team B size:
-      <input type="number" id="teamB" value="4" min="2">
-    </label>
+    <div>
+      <label>Team A size:</label>
+      <input type="number" id="teamASize" value="4" min="2">
+      <label>Team B size:</label>
+      <input type="number" id="teamBSize" value="4" min="2">
+    </div>
+    <div>
+      <label>Doubles matches to make:</label>
+      <input type="number" id="doublesToMake" value="1" min="1">
+    </div>
+
+    <button class="glow-button" onclick="onRackEmClick()">Rack ’Em!</button>
+
+    <div class="break-animation" id="breakAnimation">
+      <div class="cue-ball"></div>
+    </div>
+
+    <h2>And the dream teams are…</h2>
+    <div class="pairs" id="pairs"></div>
+
+    <div class="logo">
+      <img src="https://raw.githubusercontent.com/chalkytrousers/Chalky-doubles/main/chalky-logo.png" 
+           alt="Chalky Trousers Logo" width="200">
+    </div>
   </div>
-
-  <div>
-    <label>Doubles matches to make:
-      <input type="number" id="numMatches" value="1" min="1">
-    </label>
-  </div>
-
-  <div class="button-container">
-    <button onclick="generatePairs()">Rack ’Em!</button>
-  </div>
-
-  <div class="results" id="results">And the dream teams are…</div>
-
-  <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo" class="logo-bottom">
 
   <script>
-    function generatePairs() {
-      const teamASize = parseInt(document.getElementById('teamA').value);
-      const teamBSize = parseInt(document.getElementById('teamB').value);
-      const numMatches = parseInt(document.getElementById('numMatches').value);
-
-      let teamA = [];
-      let teamB = [];
-
-      for (let i = 1; i <= teamASize; i++) teamA.push("A" + i);
-      for (let i = 1; i <= teamBSize; i++) teamB.push("B" + i);
-
-      let matches = [];
-      for (let m = 0; m < numMatches; m++) {
-        if (teamA.length < 2 || teamB.length < 2) break;
-
-        let a1 = teamA.splice(Math.floor(Math.random() * teamA.length), 1)[0];
-        let a2 = teamA.splice(Math.floor(Math.random() * teamA.length), 1)[0];
-        let b1 = teamB.splice(Math.floor(Math.random() * teamB.length), 1)[0];
-        let b2 = teamB.splice(Math.floor(Math.random() * teamB.length), 1)[0];
-
-        matches.push(`${a1} + ${a2} vs ${b1} + ${b2}`);
+    function validateInput(teamASize, teamBSize, doublesToMake) {
+      if (teamASize < doublesToMake * 2) {
+        alert(`Not enough players in Team A. You need at least ${doublesToMake * 2} players.`);
+        return false;
       }
+      if (teamBSize < doublesToMake * 2) {
+        alert(`Not enough players in Team B. You need at least ${doublesToMake * 2} players.`);
+        return false;
+      }
+      return true;
+    }
 
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = "And the dream teams are…<br>";
+    function onRackEmClick() {
+      const teamASize = parseInt(document.getElementById("teamASize").value);
+      const teamBSize = parseInt(document.getElementById("teamBSize").value);
+      const doublesToMake = parseInt(document.getElementById("doublesToMake").value);
 
-      matches.forEach(match => {
-        const div = document.createElement("div");
-        div.className = "match";
-        div.textContent = match;
-        resultsDiv.appendChild(div);
-      });
+      if (!validateInput(teamASize, teamBSize, doublesToMake)) return;
+
+      // play break animation
+      const animation = document.getElementById("breakAnimation");
+      const cueBall = animation.querySelector(".cue-ball");
+      cueBall.style.left = "-40px"; // reset position
+      animation.style.display = "block";
+      cueBall.style.animation = "none";
+      void cueBall.offsetWidth; // trigger reflow
+      cueBall.style.animation = "shoot 1s forwards";
+
+      setTimeout(() => {
+        animation.style.display = "none";
+        generatePairs(teamASize, teamBSize, doublesToMake);
+      }, 1000);
+    }
+
+    function generatePairs(teamASize, teamBSize, doublesToMake) {
+      const teamA = Array.from({length: teamASize}, (_, i) => `A${i+1}`);
+      const teamB = Array.from({length: teamBSize}, (_, i) => `B${i+1}`);
+      shuffle(teamA);
+      shuffle(teamB);
+
+      const pairsContainer = document.getElementById("pairs");
+      pairsContainer.innerHTML = "";
+
+      for (let i = 0; i < doublesToMake; i++) {
+        const aPlayers = teamA.splice(0, 2);
+        const bPlayers = teamB.splice(0, 2);
+
+        const pairDiv = document.createElement("div");
+        pairDiv.classList.add("pair");
+        pairDiv.textContent = `${aPlayers.join(" + ")} vs ${bPlayers.join(" + ")}`;
+        pairsContainer.appendChild(pairDiv);
+      }
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     }
   </script>
 </body>
