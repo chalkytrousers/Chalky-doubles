@@ -27,12 +27,18 @@
       margin-top: 4px;
     }
     button {
-      margin: 16px 0 8px; padding: 12px 24px;
-      border-radius: 10px; border: 2px solid var(--fg);
-      background: var(--fg); color: var(--bg1);
-      font-weight: bold; font-size: 16px;
-      cursor: pointer; position: relative;
+      margin: 24px 0;   /* equal spacing above & below */
+      padding: 14px 28px;
+      border-radius: 12px;
+      border: 2px solid var(--fg);
+      background: var(--fg);
+      color: var(--bg1);
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+      position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4); /* makes it stand out */
     }
     button::before {
       content: "";
@@ -80,7 +86,7 @@
       100% { transform: scale(1.05); opacity: 1; }
     }
 
-    .footer { margin-top: auto; padding: 24px 0 10px; }
+    .footer { margin-top: 40px; padding: 16px 0 10px; }
     .footer img { max-width: 150px; display: block; margin: 0 auto; opacity: .9; }
   </style>
 </head>
@@ -151,7 +157,7 @@
       const pairs = [];
       for (let i = 0; i < count; i++) pairs.push(`${teamA[i]} + ${teamB[i]}`);
 
-      let html = `<h3>And the dream teams are…</h3>`;
+      let html = `<h3>And the dream team${count > 1 ? 's are' : ' is'}…</h3>`;
       html += `<ul>${pairs.map(p => {
         const x = Math.floor(Math.random() * 120 - 60) + "px";
         const y = Math.floor(Math.random() * 80 - 40) + "px";
@@ -159,7 +165,7 @@
       }).join('')}</ul>`;
 
       if (numPairs > count) {
-        html += `<p style="color:#bbb;margin-top:10px;">Only ${count} pairs possible with current players.</p>`;
+        html += `<p style="color:#bbb;margin-top:10px;">Only ${count} pair${count>1?'s':''} possible with current players.</p>`;
       }
 
       if (teamA.length !== teamB.length) {
