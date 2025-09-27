@@ -3,93 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chalky Trousers Doubles Drawer</title>
+  <title>Doubles Randomiser</title>
   <style>
     body {
-      background-color: black;
-      color: white;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 20px;
+      background-color: #000;
+      color: white;
+      margin: 0;
+      padding: 0;
     }
-
+    .logo {
+      margin-top: 20px;
+    }
     h1 {
-      margin-top: 10px;
-    }
-
-    #logo-top {
-      width: 120px;
-      margin: 0 auto 10px;
-      display: block;
-    }
-
-    .input-row {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
       margin: 10px 0;
     }
-
+    p {
+      margin: 10px auto 20px;
+      width: 90%;
+      max-width: 500px;
+      line-height: 1.5em;
+    }
+    .inputs {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
     label {
       display: flex;
       flex-direction: column;
-      align-items: center;
       font-size: 14px;
+      align-items: center;
+      gap: 5px;
     }
-
     input {
       width: 60px;
       text-align: center;
-      margin-top: 5px;
+      font-size: 16px;
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
     }
-
-    #generateButton {
-      margin: 25px 0;
+    .button-container {
+      margin: 40px 0 30px;
+    }
+    button {
       padding: 12px 24px;
       font-size: 18px;
-      font-weight: bold;
-      color: white;
-      background-color: black;
-      border: 2px solid white;
-      border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 0 20px 5px limegreen;
-      transition: transform 0.2s;
-    }
-
-    #generateButton:hover {
-      transform: scale(1.05);
-    }
-
-    #pairs {
-      margin: 20px 0;
-    }
-
-    .pair {
-      display: inline-block;
-      background: #222;
+      border: none;
+      border-radius: 8px;
+      background: #111;
       color: white;
-      padding: 10px 20px;
-      margin: 8px;
-      border-radius: 20px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 20px 5px #00ff00;
+    }
+    button:hover {
+      background: #222;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
       font-weight: bold;
     }
-
-    #logo-bottom {
-      width: 160px;
-      margin: 20px auto 0;
-      display: block;
+    .team {
+      background: #333;
+      display: inline-block;
+      padding: 12px 24px;
+      margin: 10px;
+      border-radius: 25px;
+      font-size: 18px;
     }
-
+    .error {
+      color: #ff5555;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .bottom-logo {
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+    /* Break animation canvas */
     #breakCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
       display: none;
-      margin: 20px auto;
-      background: black;
     }
   </style>
 </head>
 <body>
-  <img id="logo-top" src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Trousers Logo">
+  <!-- Top logo -->
+  <img src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Player Logo" width="120" class="logo">
 
   <h1>Doubles Randomiser</h1>
   <p>
@@ -97,80 +110,89 @@
     Pop your team sizes in, smash that "Rack 'Em" button, and let fate (and a dodgy algorithm) decide who’s lumped with who.
   </p>
 
-  <div class="input-row">
+  <div class="inputs">
     <label>Team A size:
-      <input type="number" id="teamA" value="4" min="2">
+      <input type="number" id="teamASize" value="4" min="2">
     </label>
     <label>Team B size:
-      <input type="number" id="teamB" value="4" min="2">
+      <input type="number" id="teamBSize" value="4" min="2">
     </label>
-  </div>
-
-  <div class="input-row">
     <label>Doubles matches to make:
-      <input type="number" id="numMatches" value="1" min="1">
+      <input type="number" id="matchCount" value="1" min="1">
     </label>
   </div>
 
-  <button id="generateButton">Rack ’Em!</button>
+  <div class="button-container">
+    <button onclick="onRackEmClick()">Rack ’Em!</button>
+  </div>
 
-  <canvas id="breakCanvas" width="300" height="150"></canvas>
+  <div id="result">
+    <p>And the dream teams are…</p>
+    <div id="pairs"></div>
+  </div>
 
-  <h2>And the dream teams are...</h2>
-  <div id="pairs"></div>
+  <!-- Bottom logo -->
+  <div class="bottom-logo">
+    <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo" width="200">
+  </div>
 
-  <img id="logo-bottom" src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo">
+  <!-- Break animation -->
+  <canvas id="breakCanvas"></canvas>
 
   <script>
-    function generateMatches() {
-      const teamASize = parseInt(document.getElementById('teamA').value);
-      const teamBSize = parseInt(document.getElementById('teamB').value);
-      const numMatches = parseInt(document.getElementById('numMatches').value);
-      const pairsDiv = document.getElementById('pairs');
-      pairsDiv.innerHTML = '';
+    function onRackEmClick() {
+      const teamASize = parseInt(document.getElementById("teamASize").value);
+      const teamBSize = parseInt(document.getElementById("teamBSize").value);
+      const matchCount = parseInt(document.getElementById("matchCount").value);
 
+      // Validation
       if (teamASize < 2 || teamBSize < 2) {
-        pairsDiv.innerHTML = "<p>⚠️ Each team needs at least 2 players for doubles!</p>";
+        document.getElementById("pairs").innerHTML = "<p class='error'>⚠️ Each team must have at least 2 players to form doubles.</p>";
+        return;
+      }
+      if (matchCount > Math.floor(teamASize / 2) || matchCount > Math.floor(teamBSize / 2)) {
+        document.getElementById("pairs").innerHTML = "<p class='error'>⚠️ Not enough players in each team to make that many doubles matches!</p>";
         return;
       }
 
-      if (numMatches > Math.floor(teamASize / 2) || numMatches > Math.floor(teamBSize / 2)) {
-        pairsDiv.innerHTML = "<p>⚠️ Not enough players for that many doubles matches!</p>";
-        return;
-      }
-
-      let teamAPlayers = Array.from({length: teamASize}, (_, i) => `A${i+1}`);
-      let teamBPlayers = Array.from({length: teamBSize}, (_, i) => `B${i+1}`);
-
-      for (let m = 0; m < numMatches; m++) {
-        let selectedA = teamAPlayers.splice(Math.floor(Math.random() * teamAPlayers.length), 1)[0];
-        let partnerA = teamAPlayers.splice(Math.floor(Math.random() * teamAPlayers.length), 1)[0];
-        let selectedB = teamBPlayers.splice(Math.floor(Math.random() * teamBPlayers.length), 1)[0];
-        let partnerB = teamBPlayers.splice(Math.floor(Math.random() * teamBPlayers.length), 1)[0];
-
-        let match = document.createElement('div');
-        match.className = 'pair';
-        match.textContent = `${selectedA} + ${partnerA} vs ${selectedB} + ${partnerB}`;
-        pairsDiv.appendChild(match);
-      }
+      // Play break animation first, then generate
+      playBreakAnimation(() => generatePairs(teamASize, teamBSize, matchCount));
     }
 
-    function playBreakAnimation() {
-      const canvas = document.getElementById('breakCanvas');
-      const ctx = canvas.getContext('2d');
+    function playBreakAnimation(callback) {
+      const canvas = document.getElementById("breakCanvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
       canvas.style.display = "block";
 
-      // create balls
-      let colors = ["red", "yellow", "red", "yellow", "red", "yellow", "black", "red", "yellow", "white"];
-      let balls = colors.map((c, i) => ({
-        x: canvas.width/2 + (i%3)*20,
-        y: canvas.height/2 + Math.floor(i/3)*20,
-        dx: (Math.random() - 0.5) * 6,
-        dy: (Math.random() - 0.5) * 6,
-        radius: 8,
-        color: c
-      }));
+      const numBalls = 15;
+      const balls = [];
 
+      // One cue ball (white), one black ball, rest red/yellow
+      for (let i = 0; i < numBalls; i++) {
+        let color, type;
+        if (i === 0) {
+          color = "white"; type = "cue";
+        } else if (i === 1) {
+          color = "black"; type = "eight";
+        } else {
+          color = Math.random() < 0.5 ? "red" : "yellow"; type = "normal";
+        }
+
+        balls.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          dx: (Math.random() - 0.5) * 15,
+          dy: (Math.random() - 0.5) * 15,
+          radius: 14,
+          color: color,
+          type: type
+        });
+      }
+
+      let frames = 0;
       function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -178,37 +200,84 @@
           ball.x += ball.dx;
           ball.y += ball.dy;
 
-          // wall bounce
-          if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) ball.dx *= -1;
-          if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) ball.dy *= -1;
+          // Bounce off walls
+          if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+            ball.dx *= -1;
+          }
+          if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+            ball.dy *= -1;
+          }
 
-          // friction
-          ball.dx *= 0.98;
-          ball.dy *= 0.98;
-
-          if (Math.abs(ball.dx) < 0.05) ball.dx = 0;
-          if (Math.abs(ball.dy) < 0.05) ball.dy = 0;
+          // Draw shaded ball
+          const gradient = ctx.createRadialGradient(ball.x - 5, ball.y - 5, 2, ball.x, ball.y, ball.radius);
+          if (ball.color === "white") {
+            gradient.addColorStop(0, "#fff");
+            gradient.addColorStop(1, "#ccc");
+          } else if (ball.color === "red") {
+            gradient.addColorStop(0, "#ff6666");
+            gradient.addColorStop(1, "#990000");
+          } else if (ball.color === "yellow") {
+            gradient.addColorStop(0, "#ffff99");
+            gradient.addColorStop(1, "#cc9900");
+          } else if (ball.color === "black") {
+            gradient.addColorStop(0, "#555");
+            gradient.addColorStop(1, "#000");
+          }
 
           ctx.beginPath();
           ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-          ctx.fillStyle = ball.color;
+          ctx.fillStyle = gradient;
           ctx.fill();
+          ctx.strokeStyle = "black";
+          ctx.stroke();
+
+          // Draw number 8 on black ball
+          if (ball.type === "eight") {
+            ctx.fillStyle = "white";
+            ctx.font = "bold 12px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("8", ball.x, ball.y);
+          }
         });
 
-        if (balls.some(b => b.dx !== 0 || b.dy !== 0)) {
+        frames++;
+        if (frames < 60) { // run animation longer
           requestAnimationFrame(animate);
         } else {
-          setTimeout(() => canvas.style.display = "none", 800);
+          canvas.style.display = "none";
+          callback();
         }
       }
-
       animate();
     }
 
-    document.getElementById("generateButton").addEventListener("click", function() {
-      playBreakAnimation();
-      generateMatches();
-    });
+    function generatePairs(teamASize, teamBSize, matchCount) {
+      let teamA = Array.from({length: teamASize}, (_, i) => "A" + (i+1));
+      let teamB = Array.from({length: teamBSize}, (_, i) => "B" + (i+1));
+
+      shuffle(teamA);
+      shuffle(teamB);
+
+      const pairsDiv = document.getElementById("pairs");
+      pairsDiv.innerHTML = "";
+
+      for (let i = 0; i < matchCount; i++) {
+        const pairA = teamA.splice(0, 2).join(" + ");
+        const pairB = teamB.splice(0, 2).join(" + ");
+        const match = document.createElement("div");
+        match.className = "team";
+        match.textContent = `${pairA} vs ${pairB}`;
+        pairsDiv.appendChild(match);
+      }
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
   </script>
 </body>
 </html>
