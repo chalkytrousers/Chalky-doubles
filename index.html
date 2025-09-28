@@ -30,30 +30,37 @@
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 60px; /* more spread between Team A and B */
+      gap: 40px; /* wider gap between Team A and Team B */
     }
     label {
       display: flex;
       flex-direction: column;
-      font-size: 18px; /* bigger headings */
+      font-size: 16px;
       font-weight: bold;
       align-items: center;
       gap: 8px;
     }
     input {
-      width: 80px; /* larger boxes */
+      width: 70px;
       text-align: center;
       font-size: 18px;
       padding: 8px;
-      border-radius: 8px;
+      border-radius: 5px;
       border: none;
     }
+    .matches-input {
+      margin: 20px 0;
+    }
+    .matches-input label {
+      font-size: 16px;
+      font-weight: bold;
+    }
     .button-container {
-      margin: 30px 0;
+      margin: 30px 0 30px;
     }
     button {
       padding: 14px 28px;
-      font-size: 20px;
+      font-size: 18px;
       cursor: pointer;
       border: none;
       border-radius: 8px;
@@ -61,59 +68,54 @@
       color: white;
       position: relative;
       z-index: 1;
-      animation: pulse 2s infinite; /* pulsing restored */
+      animation: pulse 2s infinite;
     }
     @keyframes pulse {
-      0% { box-shadow: 0 0 10px #00ff00; }
-      50% { box-shadow: 0 0 30px #00ff00; }
-      100% { box-shadow: 0 0 10px #00ff00; }
-    }
-    button:hover {
-      background: #222;
+      0% { box-shadow: 0 0 5px #00ff00; }
+      50% { box-shadow: 0 0 20px #00ff00; }
+      100% { box-shadow: 0 0 5px #00ff00; }
     }
     #result {
-      margin-top: 20px;
+      margin-top: 40px; /* equalised spacing */
       font-size: 20px;
       font-weight: bold;
     }
-    .matchups-title {
+    .matchup-title {
       font-size: 22px;
       font-weight: bold;
-      margin: 40px 0 15px;
+      margin-bottom: 10px;
       position: relative;
-      display: inline-block;
     }
-    .matchups-title::after {
+    .matchup-title::after {
       content: "";
       display: block;
+      width: 80px;
       height: 3px;
       background: #00ff00;
-      margin-top: 6px;
+      margin: 6px auto 0;
+      border-radius: 2px;
     }
-    .matchup {
+    .team-row {
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #222;
-      border-radius: 20px;
-      padding: 10px 20px;
-      margin: 10px auto;
-      width: 90%;
+      gap: 15px;
+      margin: 12px auto;
       max-width: 500px;
-      font-size: 18px;
-      opacity: 0;
-      animation: fadeIn 0.8s forwards;
     }
-    .matchup .team {
+    .team {
+      background: #222;
       flex: 1;
-      text-align: center;
+      padding: 12px;
+      border-radius: 25px;
+      font-size: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
     }
     .vs {
-      margin: 0 15px;
+      font-size: 20px;
       font-weight: bold;
       color: #00ff00;
     }
@@ -123,16 +125,17 @@
       border-radius: 50%;
       display: inline-block;
     }
-    .ball.red { background: radial-gradient(circle at 30% 30%, #ff6666, #990000); }
-    .ball.yellow { background: radial-gradient(circle at 30% 30%, #ffff99, #cc9900); }
+    .ball.red { background: radial-gradient(circle at 30% 30%, #ff9999, #cc0000); }
+    .ball.yellow { background: radial-gradient(circle at 30% 30%, #ffffcc, #cc9900); }
     .shuffling {
-      margin-top: 10px; /* bumped down for consistent spacing */
+      margin-top: 15px;
       font-size: 16px;
-      font-weight: normal;
+      font-style: italic;
+      animation: blink 1s infinite;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
     }
     .bottom-logo {
       margin-top: 30px;
@@ -169,7 +172,8 @@
       <input type="number" id="teamBSize" value="4" min="2">
     </label>
   </div>
-  <div class="inputs" style="gap:20px;">
+
+  <div class="matches-input">
     <label>Doubles matches to make:
       <input type="number" id="matchCount" value="1" min="1">
     </label>
@@ -180,9 +184,9 @@
   </div>
 
   <div id="result">
-    <div class="matchups-title">Matchups</div>
+    <p class="matchup-title">Matchups</p>
     <div id="pairs"></div>
-    <div id="shuffling" class="shuffling"></div>
+    <div id="shuffling" class="shuffling" style="display:none;">Shuffling players..</div>
   </div>
 
   <!-- Bottom logo -->
@@ -199,18 +203,26 @@
       const teamBSize = parseInt(document.getElementById("teamBSize").value);
       const matchCount = parseInt(document.getElementById("matchCount").value);
 
+      // Validation
       if (teamASize < 2 || teamBSize < 2) {
-        document.getElementById("pairs").innerHTML =
-          "<p class='error'>⚠️ Each team must have at least 2 players to form doubles.</p>";
+        document.getElementById("pairs").innerHTML = "<p class='error'>⚠️ Each team must have at least 2 players.</p>";
         return;
       }
       if (matchCount > Math.floor(teamASize / 2) || matchCount > Math.floor(teamBSize / 2)) {
-        document.getElementById("pairs").innerHTML =
-          "<p class='error'>⚠️ Not enough players in each team to make that many doubles matches!</p>";
+        document.getElementById("pairs").innerHTML = "<p class='error'>⚠️ Not enough players to make that many doubles!</p>";
         return;
       }
 
-      playBreakAnimation(() => startShuffling(teamASize, teamBSize, matchCount));
+      playBreakAnimation(() => {
+        document.getElementById("pairs").innerHTML = "";
+        document.getElementById("shuffling").style.display = "block";
+
+        setTimeout(() => {
+          document.getElementById("shuffling").style.display = "none";
+          generatePairs(teamASize, teamBSize, matchCount);
+          document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+        }, 2000);
+      });
     }
 
     function playBreakAnimation(callback) {
@@ -226,13 +238,10 @@
 
       for (let i = 0; i < numBalls; i++) {
         let color, type;
-        if (i === 0) {
-          color = "white"; type = "cue";
-        } else if (i === 1) {
-          color = "black"; type = "eight";
-        } else {
-          color = Math.random() < 0.5 ? "red" : "yellow"; type = "normal";
-        }
+        if (i === 0) { color = "white"; type = "cue"; }
+        else if (i === 1) { color = "black"; type = "eight"; }
+        else { color = Math.random() < 0.5 ? "red" : "yellow"; type = "normal"; }
+
         balls.push({
           x: canvas.width / 2,
           y: canvas.height / 2,
@@ -247,9 +256,11 @@
       let frames = 0;
       function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         balls.forEach(ball => {
           ball.x += ball.dx;
           ball.y += ball.dy;
+
           if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) ball.dx *= -1;
           if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) ball.dy *= -1;
 
@@ -277,33 +288,14 @@
 
         frames++;
         if (frames < 60) requestAnimationFrame(animate);
-        else {
-          canvas.style.display = "none";
-          callback();
-        }
+        else { canvas.style.display = "none"; callback(); }
       }
       animate();
     }
 
-    function startShuffling(teamASize, teamBSize, matchCount) {
-      const shufflingDiv = document.getElementById("shuffling");
-      shufflingDiv.textContent = "Shuffling players";
-      let dots = 0;
-      const interval = setInterval(() => {
-        dots = (dots + 1) % 4;
-        shufflingDiv.textContent = "Shuffling players" + ".".repeat(dots);
-      }, 400);
-
-      setTimeout(() => {
-        clearInterval(interval);
-        shufflingDiv.textContent = "";
-        generatePairs(teamASize, teamBSize, matchCount);
-      }, 2000);
-    }
-
     function generatePairs(teamASize, teamBSize, matchCount) {
-      let teamA = Array.from({ length: teamASize }, (_, i) => "A" + (i + 1));
-      let teamB = Array.from({ length: teamBSize }, (_, i) => "B" + (i + 1));
+      let teamA = Array.from({length: teamASize}, (_, i) => "A" + (i+1));
+      let teamB = Array.from({length: teamBSize}, (_, i) => "B" + (i+1));
 
       shuffle(teamA);
       shuffle(teamB);
@@ -314,37 +306,15 @@
       for (let i = 0; i < matchCount; i++) {
         const pairA = teamA.splice(0, 2).join(" + ");
         const pairB = teamB.splice(0, 2).join(" + ");
-
-        const matchup = document.createElement("div");
-        matchup.className = "matchup";
-
-        const teamADiv = document.createElement("div");
-        teamADiv.className = "team";
-        const ballA = document.createElement("span");
-        ballA.className = "ball red";
-        teamADiv.appendChild(ballA);
-        teamADiv.appendChild(document.createTextNode(" " + pairA));
-
-        const vsDiv = document.createElement("div");
-        vsDiv.className = "vs";
-        vsDiv.textContent = "VS";
-
-        const teamBDiv = document.createElement("div");
-        teamBDiv.className = "team";
-        const ballB = document.createElement("span");
-        ballB.className = "ball yellow";
-        teamBDiv.appendChild(ballB);
-        teamBDiv.appendChild(document.createTextNode(" " + pairB));
-
-        matchup.appendChild(teamADiv);
-        matchup.appendChild(vsDiv);
-        matchup.appendChild(teamBDiv);
-
-        matchup.style.animationDelay = `${i * 0.5}s`;
-        pairsDiv.appendChild(matchup);
+        const row = document.createElement("div");
+        row.className = "team-row";
+        row.innerHTML = `
+          <div class="team"><span class="ball red"></span>${pairA}</div>
+          <div class="vs">VS</div>
+          <div class="team"><span class="ball yellow"></span>${pairB}</div>
+        `;
+        pairsDiv.appendChild(row);
       }
-
-      document.getElementById("result").scrollIntoView({ behavior: "smooth" });
     }
 
     function shuffle(array) {
