@@ -5,58 +5,141 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Doubles Randomiser</title>
   <style>
-    body{font-family:Arial,Helvetica,sans-serif;text-align:center;background:#000;color:#fff;margin:0}
-    .logo{margin-top:20px}
-    h1{margin:10px 0}
-    p{margin:10px auto 20px;width:90%;max-width:500px;line-height:1.5em}
-    .nowrap{white-space:nowrap}
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: center;
+      background: #000;
+      color: #fff;
+      margin: 0;
+    }
+    .logo { margin-top: 20px; }
+    h1 { margin: 10px 0; }
+    p.description {
+      margin: 12px auto 24px;
+      width: 90%;
+      max-width: 480px;
+      line-height: 1.6em;
+      font-size: 16px;
+      color: #ddd;
+    }
+    .nowrap { white-space: nowrap; }
 
-    .inputs{margin:20px auto;display:flex;justify-content:center;flex-wrap:wrap;gap:20px}
-    label{display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:700;font-size:16px}
-    input{width:70px;text-align:center;font-size:18px;padding:6px;border-radius:8px;border:none}
+    .inputs {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    input {
+      width: 70px;
+      text-align: center;
+      font-size: 18px;
+      padding: 6px;
+      border-radius: 8px;
+      border: none;
+    }
 
-    .button-container{margin:28px 0}
-    button{padding:14px 30px;font-size:20px;cursor:pointer;border:none;border-radius:10px;background:#111;color:#fff;box-shadow:0 0 20px 5px #00ff00}
-    button:hover{background:#222}
+    .button-container { margin: 28px 0; }
+    button {
+      padding: 14px 30px;
+      font-size: 20px;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: #fff;
+      box-shadow: 0 0 20px 5px #00ff00;
+    }
+    button:hover { background: #222; }
 
-    #result{margin-top:26px}
-    #result h2{font-size:24px;margin:0 0 16px;display:inline-block;text-decoration:underline;text-decoration-color:#00ff00;text-underline-offset:6px}
-
-    /* loading */
-    .loading{color:#bbb;font-weight:700;margin:10px 0}
-    .dots::after{content:"";animation:dots 1s steps(4,end) infinite}
-    @keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}100%{content:""}}
+    #result { margin-top: 26px; }
+    #result h2 {
+      font-size: 24px;
+      margin: 0 0 16px;
+      display: inline-block;
+      text-decoration: underline;
+      text-decoration-color: #00ff00;
+      text-underline-offset: 6px;
+    }
 
     /* matchup rows */
-    .match-card{display:flex;justify-content:center;align-items:center;margin:12px auto;max-width:500px;padding:12px;border-radius:16px;background:#202020}
-    .team{flex:1;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:#333;font-size:18px;opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s cubic-bezier(.22,1.2,.36,1);min-width:160px}
-    .team-a{transform:translateX(-30px)}
-    .team-b{transform:translateX(30px)}
-    .team.show{opacity:1;transform:translateX(0) translateY(0)}
-    .vs{font-weight:800;color:#00ff00;font-size:20px;margin:0 10px;text-shadow:0 0 8px #00ff00}
-    .vs.flicker{animation:neon .8s linear 1,pulse 3s infinite .8s}
-    @keyframes pulse{0%,100%{text-shadow:0 0 8px #00ff00}50%{text-shadow:0 0 20px #00ff00}}
-    @keyframes neon{0%{opacity:.2;text-shadow:none}20%{opacity:1}40%{opacity:.4}60%{opacity:1}80%{opacity:.5}100%{opacity:1}}
+    .match-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 12px auto;
+      max-width: 500px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: #202020;
+      gap: 10px;
+    }
+    .team {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #333;
+      font-size: 18px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .6s ease, transform .6s cubic-bezier(.22,1.2,.36,1);
+    }
+    .team-a { transform: translateX(-30px); }
+    .team-b { transform: translateX(30px); }
+    .team.show { opacity: 1; transform: translateX(0) translateY(0); }
+
+    .vs {
+      font-weight: 800;
+      color: #00ff00;
+      font-size: 20px;
+      text-shadow: 0 0 8px #00ff00;
+    }
+    .vs.flicker {
+      animation: neon .8s linear 1, pulse 3s infinite .8s;
+    }
+    @keyframes pulse {
+      0%,100% { text-shadow: 0 0 8px #00ff00; }
+      50% { text-shadow: 0 0 20px #00ff00; }
+    }
+    @keyframes neon {
+      0% { opacity: .2; text-shadow: none; }
+      20% { opacity: 1; }
+      40% { opacity: .4; }
+      60% { opacity: 1; }
+      80% { opacity: .5; }
+      100% { opacity: 1; }
+    }
 
     /* balls */
-    .ball{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-    .ball.red{background:radial-gradient(circle at 30% 30%,#ff6666,#990000)}
-    .ball.yellow{background:radial-gradient(circle at 30% 30%,#ffff99,#cc9900)}
+    .ball { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .ball.red { background: radial-gradient(circle at 30% 30%, #ff6666, #990000); }
+    .ball.yellow { background: radial-gradient(circle at 30% 30%, #ffff99, #cc9900); }
 
-    .bottom-logo{margin:30px 0 22px}
-
-    /* Break animation canvas */
-    #breakCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:1000;display:none}
+    .bottom-logo { margin: 30px 0 22px; }
   </style>
 </head>
 <body>
   <img src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Player Logo" width="120" class="logo">
   <h1>Doubles Randomiser</h1>
-  <p>
-    Welcome to the <span class="nowrap">Chalky Trousers Doubles Drawer</span>.<br>
+  <p class="description">
+    Welcome to the <span class="nowrap">Chalky Trousers Doubles Drawer</span>.  
     Pop your team sizes in, smash that "Rack 'Em" button, and let fate (and a dodgy algorithm) decide who’s lumped with who.
   </p>
 
+  <!-- inputs -->
   <div class="inputs">
     <label>Team A size:<input type="number" id="teamASize" value="4" min="2"></label>
     <label>Team B size:<input type="number" id="teamBSize" value="4" min="2"></label>
@@ -66,138 +149,23 @@
   </div>
 
   <div class="button-container">
-    <button onclick="onRackEmClick()">Rack ’Em!</button>
+    <button>Rack ’Em!</button>
   </div>
 
   <div id="result">
     <h2>Matchups</h2>
-    <div id="pairs"></div>
+    <div id="pairs">
+      <!-- Example -->
+      <div class="match-card">
+        <div class="team team-a show"><span class="ball red"></span>A4 + A1</div>
+        <div class="vs">VS</div>
+        <div class="team team-b show"><span class="ball yellow"></span>B3 + B5</div>
+      </div>
+    </div>
   </div>
 
   <div class="bottom-logo">
     <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo" width="200">
   </div>
-
-  <!-- Break animation -->
-  <canvas id="breakCanvas"></canvas>
-
-  <script>
-    function onRackEmClick(){
-      const teamASize = parseInt(document.getElementById('teamASize').value);
-      const teamBSize = parseInt(document.getElementById('teamBSize').value);
-      const matchCount = parseInt(document.getElementById('matchCount').value);
-
-      if(teamASize<2 || teamBSize<2){ return showError("⚠️ Each team must have at least 2 players."); }
-      if(matchCount>Math.floor(teamASize/2) || matchCount>Math.floor(teamBSize/2)){
-        return showError("⚠️ Not enough players in each team for that many matches.");
-      }
-
-      // 1) Break animation
-      playBreakAnimation(()=>{
-        // 2) Show shuffling + scroll to results
-        const pairsDiv = document.getElementById('pairs');
-        pairsDiv.innerHTML = `<div class="loading">Shuffling players<span class="dots"></span></div>`;
-        document.getElementById('result').scrollIntoView({behavior:'smooth'});
-        // 3) Reveal with fades
-        setTimeout(()=> generatePairs(teamASize, teamBSize, matchCount), 1500);
-      });
-    }
-
-    function showError(msg){
-      const pairsDiv = document.getElementById('pairs');
-      pairsDiv.innerHTML = `<p style="color:#ff5555;font-weight:700">${msg}</p>`;
-      document.getElementById('result').scrollIntoView({behavior:'smooth'});
-    }
-
-    function generatePairs(teamASize, teamBSize, matchCount){
-      let teamA = Array.from({length:teamASize},(_,i)=>`A${i+1}`);
-      let teamB = Array.from({length:teamBSize},(_,i)=>`B${i+1}`);
-      shuffle(teamA); shuffle(teamB);
-
-      const pairsDiv = document.getElementById('pairs');
-      pairsDiv.innerHTML = "";
-
-      for(let i=0;i<matchCount;i++){
-        const pairA = teamA.splice(0,2).join(" + ");
-        const pairB = teamB.splice(0,2).join(" + ");
-
-        const card = document.createElement('div');
-        card.className = 'match-card';
-
-        const aDiv = document.createElement('div');
-        aDiv.className = 'team team-a';
-        aDiv.innerHTML = `<span class="ball red"></span>${pairA}`;
-
-        const vs = document.createElement('div');
-        vs.className = 'vs';
-        vs.textContent = 'VS';
-
-        const bDiv = document.createElement('div');
-        bDiv.className = 'team team-b';
-        bDiv.innerHTML = `<span class="ball yellow"></span>${pairB}`;
-
-        card.appendChild(aDiv); card.appendChild(vs); card.appendChild(bDiv);
-        pairsDiv.appendChild(card);
-
-        // staggered reveal: A -> VS flicker -> B
-        const base = i*800;
-        setTimeout(()=> aDiv.classList.add('show'), base+60);
-        setTimeout(()=>{
-          vs.classList.add('flicker');
-          setTimeout(()=> vs.classList.remove('flicker'), 900);
-        }, base+320);
-        setTimeout(()=> bDiv.classList.add('show'), base+540);
-      }
-    }
-
-    function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){
-        const j=Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]]=[arr[j],arr[i]];
-      }
-    }
-
-    // ---- Break animation (pool balls) ----
-    function playBreakAnimation(done){
-      const canvas = document.getElementById('breakCanvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = innerWidth; canvas.height = innerHeight;
-      canvas.style.display = 'block';
-
-      const balls = [];
-      for(let i=0;i<15;i++){
-        let color='red', type='normal';
-        if(i===0){color='white';type='cue'}
-        else if(i===1){color='black';type='eight'}
-        else if(Math.random()<0.5){color='yellow'}
-        balls.push({
-          x:canvas.width/2, y:canvas.height/2,
-          dx:(Math.random()-0.5)*15, dy:(Math.random()-0.5)*15,
-          r:14, color, type
-        });
-      }
-
-      let frames=0;
-      (function tick(){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        balls.forEach(b=>{
-          b.x+=b.dx; b.y+=b.dy;
-          if(b.x-b.r<0||b.x+b.r>canvas.width) b.dx*=-1;
-          if(b.y-b.r<0||b.y+b.r>canvas.height) b.dy*=-1;
-
-          const g = ctx.createRadialGradient(b.x-5,b.y-5,2,b.x,b.y,b.r);
-          if(b.color==='white'){g.addColorStop(0,'#fff');g.addColorStop(1,'#ccc')}
-          else if(b.color==='red'){g.addColorStop(0,'#ff6666');g.addColorStop(1,'#990000')}
-          else if(b.color==='yellow'){g.addColorStop(0,'#ffff99');g.addColorStop(1,'#cc9900')}
-          else {g.addColorStop(0,'#555');g.addColorStop(1,'#000')}
-          ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill(); ctx.strokeStyle='#000'; ctx.stroke();
-          if(b.type==='eight'){ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('8',b.x,b.y)}
-        });
-        frames++;
-        if(frames<60){requestAnimationFrame(tick)}
-        else{canvas.style.display='none'; done()}
-      })();
-    }
-  </script>
 </body>
 </html>
