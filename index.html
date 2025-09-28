@@ -30,7 +30,7 @@
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 40px; /* wider gap between Team A and Team B */
+      gap: 40px;
     }
     label {
       display: flex;
@@ -56,7 +56,7 @@
       font-weight: bold;
     }
     .button-container {
-      margin: 30px 0 30px;
+      margin: 35px 0 35px;
     }
     button {
       padding: 14px 28px;
@@ -66,8 +66,6 @@
       border-radius: 8px;
       background: #111;
       color: white;
-      position: relative;
-      z-index: 1;
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
@@ -76,7 +74,7 @@
       100% { box-shadow: 0 0 5px #00ff00; }
     }
     #result {
-      margin-top: 40px; /* equalised spacing */
+      margin-top: 40px;
       font-size: 20px;
       font-weight: bold;
     }
@@ -102,6 +100,11 @@
       gap: 15px;
       margin: 12px auto;
       max-width: 500px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .team-row.visible {
+      opacity: 1;
     }
     .team {
       background: #222;
@@ -130,18 +133,21 @@
     .shuffling {
       margin-top: 15px;
       font-size: 16px;
-      font-style: italic;
-      animation: blink 1s infinite;
     }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+    .dots::after {
+      content: '';
+      animation: dots 1.5s steps(3, end) infinite;
+    }
+    @keyframes dots {
+      0% { content: ''; }
+      33% { content: '.'; }
+      66% { content: '..'; }
+      100% { content: '...'; }
     }
     .bottom-logo {
       margin-top: 30px;
       margin-bottom: 20px;
     }
-    /* Break animation canvas */
     #breakCanvas {
       position: fixed;
       top: 0;
@@ -155,7 +161,6 @@
   </style>
 </head>
 <body>
-  <!-- Top logo -->
   <img src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Player Logo" width="120" class="logo">
 
   <h1>Doubles Randomiser</h1>
@@ -186,15 +191,13 @@
   <div id="result">
     <p class="matchup-title">Matchups</p>
     <div id="pairs"></div>
-    <div id="shuffling" class="shuffling" style="display:none;">Shuffling players..</div>
+    <div id="shuffling" class="shuffling dots" style="display:none;">Shuffling players</div>
   </div>
 
-  <!-- Bottom logo -->
   <div class="bottom-logo">
     <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo" width="200">
   </div>
 
-  <!-- Break animation -->
   <canvas id="breakCanvas"></canvas>
 
   <script>
@@ -203,7 +206,6 @@
       const teamBSize = parseInt(document.getElementById("teamBSize").value);
       const matchCount = parseInt(document.getElementById("matchCount").value);
 
-      // Validation
       if (teamASize < 2 || teamBSize < 2) {
         document.getElementById("pairs").innerHTML = "<p class='error'>⚠️ Each team must have at least 2 players.</p>";
         return;
@@ -314,6 +316,8 @@
           <div class="team"><span class="ball yellow"></span>${pairB}</div>
         `;
         pairsDiv.appendChild(row);
+
+        setTimeout(() => row.classList.add("visible"), i * 400);
       }
     }
 
