@@ -52,7 +52,13 @@
       margin: 25px auto;
       font-size: 16px;
       font-weight: bold;
-      display: block;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .match-count input {
+      margin-top: 8px;
     }
     .button-container {
       margin: 30px 0;
@@ -185,7 +191,7 @@
   </div>
 
   <div class="match-count">
-    Doubles matches to make:  
+    <span>Doubles matches to make:</span>
     <input type="number" id="matchCount" value="1" min="1">
   </div>
 
@@ -306,7 +312,8 @@
       setTimeout(() => {
         shuffling.style.display = "none";
         callback();
-      }, 3000); // longer duration
+        document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+      }, 3000); // duration
     }
 
     function generatePairs(teamASize, teamBSize, matchCount) {
