@@ -149,23 +149,90 @@
   </div>
 
   <div class="button-container">
-    <button>Rack ’Em!</button>
+    <button onclick="onRackEmClick()">Rack ’Em!</button>
   </div>
 
   <div id="result">
     <h2>Matchups</h2>
-    <div id="pairs">
-      <!-- Example -->
-      <div class="match-card">
-        <div class="team team-a show"><span class="ball red"></span>A4 + A1</div>
-        <div class="vs">VS</div>
-        <div class="team team-b show"><span class="ball yellow"></span>B3 + B5</div>
-      </div>
-    </div>
+    <div id="pairs"></div>
   </div>
 
   <div class="bottom-logo">
     <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo" width="200">
   </div>
+
+  <script>
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function onRackEmClick() {
+      const teamASize = parseInt(document.getElementById("teamASize").value);
+      const teamBSize = parseInt(document.getElementById("teamBSize").value);
+      const matchCount = parseInt(document.getElementById("matchCount").value);
+
+      if (teamASize < 2 || teamBSize < 2) {
+        alert("⚠️ Each team must have at least 2 players.");
+        return;
+      }
+      if (matchCount > Math.floor(teamASize/2) || matchCount > Math.floor(teamBSize/2)) {
+        alert("⚠️ Not enough players to make that many doubles!");
+        return;
+      }
+
+      // show "shuffling players..." briefly
+      const pairsDiv = document.getElementById("pairs");
+      pairsDiv.innerHTML = "<p>🎱 Shuffling players...</p>";
+
+      setTimeout(() => {
+        generatePairs(teamASize, teamBSize, matchCount);
+        document.getElementById("result").scrollIntoView({behavior: "smooth"});
+      }, 2000); // longer shuffle effect
+    }
+
+    function generatePairs(teamASize, teamBSize, matchCount) {
+      let teamA = Array.from({length: teamASize}, (_, i) => "A" + (i+1));
+      let teamB = Array.from({length: teamBSize}, (_, i) => "B" + (i+1));
+
+      shuffle(teamA);
+      shuffle(teamB);
+
+      const pairsDiv = document.getElementById("pairs");
+      pairsDiv.innerHTML = "";
+
+      for (let i = 0; i < matchCount; i++) {
+        const pairA = teamA.splice(0,2).join(" + ");
+        const pairB = teamB.splice(0,2).join(" + ");
+
+        const card = document.createElement("div");
+        card.className = "match-card";
+
+        const teamADiv = document.createElement("div");
+        teamADiv.className = "team team-a";
+        teamADiv.innerHTML = `<span class="ball red"></span>${pairA}`;
+
+        const vsDiv = document.createElement("div");
+        vsDiv.className = "vs flicker";
+        vsDiv.textContent = "VS";
+
+        const teamBDiv = document.createElement("div");
+        teamBDiv.className = "team team-b";
+        teamBDiv.innerHTML = `<span class="ball yellow"></span>${pairB}`;
+
+        card.appendChild(teamADiv);
+        card.appendChild(vsDiv);
+        card.appendChild(teamBDiv);
+
+        pairsDiv.appendChild(card);
+
+        // stagger fade-in
+        setTimeout(() => teamADiv.classList.add("show"), i*600);
+        setTimeout(() => teamBDiv.classList.add("show"), i*600 + 400);
+      }
+    }
+  </script>
 </body>
 </html>
