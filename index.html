@@ -1,258 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Doubles Randomiser</title>
   <style>
-    :root{
-      --bg:#000;
-      --panel:#0f0f0f;
-      --card:#323232e6;
-      --card-2:#282828e6;
-      --accent:#00ff00;
-      --text:#fff;
-      --muted:#bbb;
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #000;
+      color: white;
+      margin: 0;
+      padding: 0;
     }
-    *{box-sizing:border-box}
-    body{
-      font-family: Arial, Helvetica, sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      margin:0; padding:0;
-      text-align:center;
+    .logo {
+      margin-top: 20px;
     }
-
-    .logo{ margin-top:20px }
-
-    h1{ margin:10px 0 }
-
-    p.desc{
-      margin:10px auto 20px;
-      width:90%; max-width:540px; line-height:1.5em;
+    h1 {
+      margin: 10px 0;
     }
-
-    .inputs{
-      margin:15px auto;
-      display:flex; justify-content:center; flex-wrap:wrap; gap:30px;
-      max-width:540px;
+    p {
+      margin: 10px auto 20px;
+      width: 90%;
+      max-width: 500px;
+      line-height: 1.5em;
     }
-    .inputs-card{
-      background:var(--panel);
-      border-radius:14px;
-      padding:14px 16px;
-      width:100%;
+    .inputs {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
     }
-    .inputs.split{ gap:30px }
-    .inputs.split .inputs-card{ width:calc(50% - 15px) }
-
-    label{
-      display:flex; flex-direction:column; align-items:center; gap:6px;
-      font-size:16px; font-weight:700;
+    label {
+      display: flex;
+      flex-direction: column;
+      font-size: 16px;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
     }
-    input[type="number"]{
-      width:78px; height:44px;
-      text-align:center; font-size:18px;
-      padding:6px 8px;
-      border-radius:10px; border:none;
-      background:#f5f5f5; color:#111;
+    input {
+      width: 70px;
+      text-align: center;
+      font-size: 18px;
+      padding: 6px;
+      border-radius: 8px;
+      border: none;
     }
-
-    .button-container{
-      margin:40px 0;
-      display:flex;
-      justify-content:center;
+    .button-container {
+      margin: 30px 0 30px;
     }
-    button{
-      padding:14px 28px; font-size:20px; cursor:pointer; border:none; border-radius:10px;
-      color:#fff; background: linear-gradient(#1a1a1a,#0d0d0d);
-      position:relative;
-      box-shadow:0 0 20px 5px var(--accent);
-      animation: btnPulse 2s infinite;
+    button {
+      padding: 12px 26px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background: #111;
+      color: white;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 25px 6px #00ff00;
     }
-    button:active{ transform:translateY(1px) }
-
-    @keyframes btnPulse{
-      0%,100%{ box-shadow:0 0 12px 2px var(--accent) }
-      50%{ box-shadow:0 0 26px 9px var(--accent) }
+    button:hover {
+      background: #222;
     }
-
-    #result{
-      margin-top:10px; font-size:20px; font-weight:700;
+    #result {
+      margin-top: 30px;
     }
-    .results-bg{
-      background: radial-gradient(circle, rgba(0,128,0,0.22) 0%, rgba(0,0,0,1) 85%);
-      padding:15px 0; border-radius:20px;
-      margin:15px auto; max-width:540px;
+    #result h2 {
+      font-size: 22px;
+      margin-bottom: 15px;
+      text-decoration: underline;
+      text-decoration-color: #00ff00;
     }
-    .matchups-heading{
-      font-size:22px; margin:12px 0 14px;
-      display:inline-block; padding-bottom:5px;
-      border-bottom:2px solid var(--accent);
+    .matchup {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 12px auto;
+      max-width: 400px;
+      background: #222;
+      border-radius: 12px;
+      padding: 8px 12px;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
-
-    .loading{ color:var(--muted); font-weight:600; margin:8px 0 4px }
-    .dots::after{ animation: dots 1s steps(4,end) infinite; content:"" }
-    @keyframes dots{
-      0%{content:""} 25%{content:"."} 50%{content:".."} 75%{content:"..."} 100%{content:""}
+    .matchup.show {
+      opacity: 1;
+      transform: translateY(0);
     }
-
-    .match-card{
-      display:flex; justify-content:center; align-items:center;
-      margin:10px auto; border-radius:16px; max-width:520px; padding:12px;
-      background:var(--card);
+    .team {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 8px;
+      margin: 0 8px;
+      background: #333;
     }
-    .match-card:nth-child(even){ background:var(--card-2) }
-
-    .team{
-      flex:1;
-      display:flex; align-items:center; justify-content:flex-start; gap:10px;
-      background:#222;
-      margin:0 10px; padding:10px 12px;
-      border-radius:12px; font-size:18px;
-      opacity:0; transform: translateY(10px);
-      transition: opacity .5s ease, transform .5s cubic-bezier(.22,1.2,.36,1);
-      min-width:160px; /* keeps alignment */
+    .vs {
+      font-size: 18px;
+      font-weight: bold;
+      color: #00ff00;
+      animation: flicker 1.5s infinite alternate;
     }
-    .team-a{ justify-content:flex-start; text-align:left }
-    .team-b{ justify-content:flex-start; text-align:left }
-    .team.show{ opacity:1; transform: translateX(0) translateY(0) }
-
-    .ball{ width:16px; height:16px; border-radius:50%; flex-shrink:0 }
-    .ball.red{ background: radial-gradient(circle at 30% 30%, #ff8c8c 0%, #cc0000 70%) }
-    .ball.yellow{ background: radial-gradient(circle at 30% 30%, #fff2a1 0%, #caa300 70%) }
-
-    .vs{
-      font-size:22px; font-weight:800; color:var(--accent);
-      text-shadow:0 0 8px var(--accent);
-      margin:0 2px; min-width:3ch;
+    .ball {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
     }
-    .vs.flicker{ animation: neonFlicker .85s linear 1, vsPulse 3s infinite .85s }
-    @keyframes vsPulse{
-      0%,100%{ text-shadow:0 0 8px var(--accent) }
-      50%{ text-shadow:0 0 20px var(--accent) }
+    .ball.red { background: radial-gradient(circle at 30% 30%, #ff6666, #990000); }
+    .ball.yellow { background: radial-gradient(circle at 30% 30%, #ffff99, #cc9900); }
+    @keyframes flicker {
+      0% { opacity: 1; }
+      100% { opacity: 0.5; }
     }
-    @keyframes neonFlicker{
-      0%{ opacity:.2; text-shadow:none }
-      15%{ opacity:1 }
-      30%{ opacity:.4 }
-      45%{ opacity:1 }
-      60%{ opacity:.5 }
-      75%{ opacity:1 }
-      100%{ opacity:1 }
+    .bottom-logo {
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+    /* Break animation canvas */
+    #breakCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <img src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Player Logo" width="120" class="logo"/>
+  <!-- Top logo -->
+  <img src="https://i.imgur.com/yTCNg6N.png" alt="Chalky Player Logo" width="120" class="logo">
+
   <h1>Doubles Randomiser</h1>
-  <p class="desc">
-    Welcome to the Chalky Trousers Doubles Drawer.
+  <p>
+    Welcome to the Chalky Trousers Doubles Drawer.  
     Pop your team sizes in, smash that "Rack 'Em" button, and let fate (and a dodgy algorithm) decide who’s lumped with who.
   </p>
 
-  <div class="inputs split">
-    <div class="inputs-card">
-      <label>Team A size:
-        <input type="number" id="teamASize" value="4" min="2"/>
-      </label>
-    </div>
-    <div class="inputs-card">
-      <label>Team B size:
-        <input type="number" id="teamBSize" value="4" min="2"/>
-      </label>
-    </div>
+  <div class="inputs">
+    <label>Team A size:
+      <input type="number" id="teamASize" value="4" min="2">
+    </label>
+    <label>Team B size:
+      <input type="number" id="teamBSize" value="4" min="2">
+    </label>
   </div>
 
   <div class="inputs">
-    <div class="inputs-card">
-      <label>Doubles matches to make:
-        <input type="number" id="matchCount" value="1" min="1"/>
-      </label>
-    </div>
+    <label>Doubles matches to make:
+      <input type="number" id="matchCount" value="1" min="1">
+    </label>
   </div>
 
   <div class="button-container">
-    <button id="rackBtn" onclick="onRackEmClick()">Rack ’Em!</button>
+    <button onclick="onRackEmClick()">Rack ’Em!</button>
   </div>
 
-  <div id="result" class="results-bg">
-    <div class="matchups-heading">Matchups</div>
+  <div id="result">
+    <h2>Matchups</h2>
     <div id="pairs"></div>
   </div>
 
-  <div style="margin:26px 0 20px">
-    <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo" width="200"/>
+  <!-- Bottom logo -->
+  <div class="bottom-logo">
+    <img src="https://i.imgur.com/Tmxwc47.png" alt="Chalky Trousers Logo" width="200">
   </div>
 
+  <!-- Break animation -->
+  <canvas id="breakCanvas"></canvas>
+
   <script>
-    function onRackEmClick(){
+    function onRackEmClick() {
       const teamASize = parseInt(document.getElementById("teamASize").value);
       const teamBSize = parseInt(document.getElementById("teamBSize").value);
       const matchCount = parseInt(document.getElementById("matchCount").value);
 
-      const pairsDiv = document.getElementById("pairs");
-      if (teamASize < 2 || teamBSize < 2){
-        pairsDiv.innerHTML = "<p class='error'>⚠️ Each team must have at least 2 players.</p>";
+      if (teamASize < 2 || teamBSize < 2) {
+        alert("⚠️ Each team must have at least 2 players to form doubles.");
         return;
       }
-      const maxMatchesA = Math.floor(teamASize/2);
-      const maxMatchesB = Math.floor(teamBSize/2);
-      if (matchCount > maxMatchesA || matchCount > maxMatchesB){
-        pairsDiv.innerHTML = "<p class='error'>⚠️ Not enough players in each team for that many matches!</p>";
+      if (matchCount > Math.floor(teamASize / 2) || matchCount > Math.floor(teamBSize / 2)) {
+        alert("⚠️ Not enough players in each team to make that many doubles matches!");
         return;
       }
 
-      pairsDiv.innerHTML = `<div class="loading">Shuffling players<span class="dots"></span></div>`;
-      setTimeout(()=> generatePairs(teamASize, teamBSize, matchCount), 600);
+      playBreakAnimation(() => {
+        generatePairs(teamASize, teamBSize, matchCount);
+        // Auto scroll to results
+        document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+      });
     }
 
-    function generatePairs(teamASize, teamBSize, matchCount){
-      let teamA = Array.from({length: teamASize}, (_, i)=>`A${i+1}`);
-      let teamB = Array.from({length: teamBSize}, (_, i)=>`B${i+1}`);
-      shuffle(teamA); shuffle(teamB);
+    function playBreakAnimation(callback) {
+      const canvas = document.getElementById("breakCanvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.display = "block";
+
+      const numBalls = 15;
+      const balls = [];
+
+      for (let i = 0; i < numBalls; i++) {
+        let color, type;
+        if (i === 0) {
+          color = "white"; type = "cue";
+        } else if (i === 1) {
+          color = "black"; type = "eight";
+        } else {
+          color = Math.random() < 0.5 ? "red" : "yellow"; type = "normal";
+        }
+        balls.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          dx: (Math.random() - 0.5) * 15,
+          dy: (Math.random() - 0.5) * 15,
+          radius: 14,
+          color: color,
+          type: type
+        });
+      }
+
+      let frames = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        balls.forEach(ball => {
+          ball.x += ball.dx;
+          ball.y += ball.dy;
+
+          if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) ball.dx *= -1;
+          if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) ball.dy *= -1;
+
+          const gradient = ctx.createRadialGradient(ball.x - 5, ball.y - 5, 2, ball.x, ball.y, ball.radius);
+          if (ball.color === "white") {
+            gradient.addColorStop(0, "#fff"); gradient.addColorStop(1, "#ccc");
+          } else if (ball.color === "red") {
+            gradient.addColorStop(0, "#ff6666"); gradient.addColorStop(1, "#990000");
+          } else if (ball.color === "yellow") {
+            gradient.addColorStop(0, "#ffff99"); gradient.addColorStop(1, "#cc9900");
+          } else if (ball.color === "black") {
+            gradient.addColorStop(0, "#555"); gradient.addColorStop(1, "#000");
+          }
+
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+          ctx.strokeStyle = "black";
+          ctx.stroke();
+
+          if (ball.type === "eight") {
+            ctx.fillStyle = "white";
+            ctx.font = "bold 12px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("8", ball.x, ball.y);
+          }
+        });
+
+        frames++;
+        if (frames < 60) {
+          requestAnimationFrame(animate);
+        } else {
+          canvas.style.display = "none";
+          callback();
+        }
+      }
+      animate();
+    }
+
+    function generatePairs(teamASize, teamBSize, matchCount) {
+      let teamA = Array.from({length: teamASize}, (_, i) => "A" + (i+1));
+      let teamB = Array.from({length: teamBSize}, (_, i) => "B" + (i+1));
+
+      shuffle(teamA);
+      shuffle(teamB);
 
       const pairsDiv = document.getElementById("pairs");
       pairsDiv.innerHTML = "";
 
-      for(let i=0; i<matchCount; i++){
-        const pairA = teamA.splice(0,2).join(" + ");
-        const pairB = teamB.splice(0,2).join(" + ");
+      for (let i = 0; i < matchCount; i++) {
+        const pairA = teamA.splice(0, 2).join(" + ");
+        const pairB = teamB.splice(0, 2).join(" + ");
 
-        const card = document.createElement('div');
-        card.className = 'match-card';
+        const matchupDiv = document.createElement("div");
+        matchupDiv.className = "matchup";
 
-        const teamADiv = document.createElement('div');
-        teamADiv.className = 'team team-a';
-        teamADiv.innerHTML = `<span class="ball red"></span><span>${pairA}</span>`;
+        const teamADiv = document.createElement("div");
+        teamADiv.className = "team";
+        teamADiv.innerHTML = `<span class="ball red"></span>${pairA}`;
 
-        const vsDiv = document.createElement('div');
-        vsDiv.className = 'vs';
-        vsDiv.textContent = 'VS';
+        const vsDiv = document.createElement("div");
+        vsDiv.className = "vs";
+        vsDiv.textContent = "VS";
 
-        const teamBDiv = document.createElement('div');
-        teamBDiv.className = 'team team-b';
-        teamBDiv.innerHTML = `<span class="ball yellow"></span><span>${pairB}</span>`;
+        const teamBDiv = document.createElement("div");
+        teamBDiv.className = "team";
+        teamBDiv.innerHTML = `<span class="ball yellow"></span>${pairB}`;
 
-        card.appendChild(teamADiv);
-        card.appendChild(vsDiv);
-        card.appendChild(teamBDiv);
-        pairsDiv.appendChild(card);
+        matchupDiv.appendChild(teamADiv);
+        matchupDiv.appendChild(vsDiv);
+        matchupDiv.appendChild(teamBDiv);
+        pairsDiv.appendChild(matchupDiv);
 
-        const base = i*700;
-        setTimeout(()=> teamADiv.classList.add('show'), base + 50);
-        setTimeout(()=>{
-          vsDiv.classList.add('flicker');
-          setTimeout(()=> vsDiv.classList.remove('flicker'), 900);
-        }, base + 350);
-        setTimeout(()=> teamBDiv.classList.add('show'), base + 420);
+        setTimeout(() => {
+          matchupDiv.classList.add("show");
+        }, i * 700);
       }
     }
 
-    function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]] = [arr[j],arr[i]];
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
       }
     }
   </script>
