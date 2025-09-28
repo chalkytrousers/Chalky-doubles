@@ -158,8 +158,7 @@
         pairsDiv.innerHTML = `<div class="loading">Shuffling players<span class="dots"></span></div>`;
         setTimeout(() => {
           generatePairs(teamASize, teamBSize, matchCount);
-          document.getElementById("result").scrollIntoView({ behavior: "smooth" });
-        }, 600);
+        }, 1500); // longer shuffle time
       });
     }
 
